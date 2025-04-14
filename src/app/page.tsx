@@ -5,9 +5,8 @@ export default function Home() {
   return (
     <>
       {" "}
-      <Header />
       <div className="flex w-full h-screen items-center justify-center">
-        Algoing Home
+        sAlgoing Homes
       </div>
     </>
   );
