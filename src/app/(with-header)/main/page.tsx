@@ -4,6 +4,7 @@ import ContributionCalendar from "./components/Calendar";
 import Progress from "./components/Progress";
 import RecommendedProblems from "./components/Recommend";
 import { FaCode } from "react-icons/fa";
+
 export default function UserDashboard() {
   const contributions = [
     { date: "2025-03-17", count: 1 },
