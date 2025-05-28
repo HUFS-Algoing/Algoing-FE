@@ -1,6 +1,6 @@
-import CodeEditor from "@/app/_components/code/CodeEditor";
-import CodeHeader from "@/app/_components/code/CodeHeader";
-import Footer from "@/app/_components/code/Footer";
+import CodeEditor from "@/app/(with-header)/code/components/code/CodeEditor";
+import CodeHeader from "@/app/(with-header)/code/components/code/CodeHeader";
+import Footer from "@/app/(with-header)/code/components/code/Footer";
 
 export default function Code() {
   return (

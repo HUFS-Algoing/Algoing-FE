@@ -21,7 +21,13 @@ export default function CodeHeader() {
         </div>{" "}
       </div>
       <div className="size-8">
-        <ShareButton />
+        <Image
+          src="/problem/Share.svg"
+          alt="Share Icon"
+          width={24}
+          height={24}
+          objectFit="contain"
+        />
       </div>
     </header>
   );
