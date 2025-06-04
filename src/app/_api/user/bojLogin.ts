@@ -1,4 +1,3 @@
-// api/boj.ts
 import axios from "axios";
 
 const API_BASE_URL = "https://api.al-going.com";

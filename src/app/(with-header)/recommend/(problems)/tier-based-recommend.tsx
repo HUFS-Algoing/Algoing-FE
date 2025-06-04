@@ -30,16 +30,17 @@ export default function TierBasedRecommendSection() {
           </div>
         ) : (
           <Carousel itemsPerPage={4}>
-            {data.map((problem) => (
-              <ProblemCard
-                key={problem.problemId}
-                id={problem.problemId}
-                title={problem.title}
-                level={problem.level}
-                tags={problem.tag.split(",")}
-                isSolved={false}
-              />
-            ))}
+            {Array.isArray(data) &&
+              data.map((problem: any) => (
+                <ProblemCard
+                  key={problem.problemId}
+                  id={problem.problemId}
+                  title={problem.title}
+                  level={1}
+                  tags={problem.tag.split(",")}
+                  isSolved={false}
+                />
+              ))}
           </Carousel>
         )}
       </div>

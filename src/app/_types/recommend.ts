@@ -19,6 +19,7 @@ export interface TierBasedRecommend {
 }
 
 export interface TierBasedRecommendResponse {
+  length: number;
   isSuccess: boolean;
   code: string;
   message: string;

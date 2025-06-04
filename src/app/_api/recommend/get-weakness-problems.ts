@@ -1,7 +1,4 @@
-import axios from "axios";
-
-const API_BASE_URL = "https://api.al-going.com";
-
+import { apiGet } from "../methods";
 export interface WeaknessProblem {
   problemId: number;
   title: string;
@@ -17,8 +14,5 @@ export interface WeaknessResponse {
 }
 
 export const getWeaknessProblems = async (userId: number) => {
-  const res = await axios.get<WeaknessResponse>(
-    `${API_BASE_URL}/api/recommend/weakness/${userId}`
-  );
-  return res.data.result;
+  return apiGet<WeaknessResponse>(`/recommend/weakness/${userId}`);
 };

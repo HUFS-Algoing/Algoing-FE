@@ -24,14 +24,15 @@ export default function IncProblemSection() {
           <div className="text-center text-red-500 py-12">
             문제 데이터를 불러오지 못했습니다.
           </div>
-        ) : incProblems?.length === 0 ? (
+        ) : Array.isArray(incProblems) && incProblems.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-12 text-gray-500">
             <TrendingUp className="h-12 w-12 mb-4 text-gray-300" />
             <p>추천 문제가 없습니다.</p>
           </div>
         ) : (
-          <Carousel itemsPerPage={4}>
-            {incProblems.map((problem) => (
+        <Carousel itemsPerPage={4}>
+          {Array.isArray(incProblems) &&
+            incProblems.map((problem: any) => (
               <ProblemCard
                 key={problem.problemId}
                 id={problem.problemId}
@@ -41,7 +42,7 @@ export default function IncProblemSection() {
                 isSolved={false}
               />
             ))}
-          </Carousel>
+        </Carousel>
         )}
       </div>
     </section>

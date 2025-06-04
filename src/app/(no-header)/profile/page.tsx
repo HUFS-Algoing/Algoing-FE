@@ -3,7 +3,7 @@
 
 import { useState, ChangeEvent } from "react";
 import { useMutation } from "@tanstack/react-query";
-import { postBOJ } from "@/app/_api/bojLogin";
+import { postBOJ } from "@/app/_api/user/bojLogin";
 import Image from "next/image";
 
 export default function ProfileForm() {
