@@ -1,25 +1,27 @@
-name: Comment Vercel Preview URL on PR
+name: Comment Vercel Preview on PR
 
 on:
   pull_request:
     types: [opened, synchronize]
 
 jobs:
-  comment:
+  preview-comment:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Get branch name
-        id: extract
-        run: |
-          BRANCH_NAME=${{ github.head_ref }}
-          # Replace slashes (/) with dashes (-) to match Vercel preview URL format
-          BRANCH_NAME_SANITIZED=$(echo "$BRANCH_NAME" | sed 's|/|-|g')
-          echo "sanitized_name=${BRANCH_NAME_SANITIZED}" >> $GITHUB_OUTPUT
+      - name: ✅ Checkout (필수)
+        uses: actions/checkout@v3
 
-      - name: Comment on PR with Preview URL
+      - name: 🔧 Sanitize branch name
+        id: sanitize
+        run: |
+          BRANCH=${{ github.head_ref }}
+          SAFE_NAME=$(echo "$BRANCH" | sed 's|/|-|g')
+          echo "safe_branch=${SAFE_NAME}" >> $GITHUB_OUTPUT
+
+      - name: 💬 Comment on PR with Preview URL
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          COMMENT="✅ Vercel Preview: https://${{ steps.extract.outputs.sanitized_name }}.vercel.app"
-          gh pr comment ${{ github.event.pull_request.number }} --body "$COMMENT"
+          URL="https://${{ steps.sanitize.outputs.safe_branch }}-algoing.vercel.app"
+          gh pr comment ${{ github.event.pull_request.number }} --body "✅ Vercel Preview: $URL"
