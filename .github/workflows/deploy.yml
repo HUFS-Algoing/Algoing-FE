@@ -1,0 +1,27 @@
+name: Sync upstream develop branch
+
+on:
+  schedule:
+    - cron: "0 * * * *" # 매 시간마다 실행
+  workflow_dispatch:
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          token: ${{ secrets.AUTO_ACTIONS }}
+
+      - name: Setup Git
+        run: |
+          git config user.name "github-actions"
+          git config user.email "${{ secrets.EMAIL }}"
+
+      - name: Add upstream and sync
+        run: |
+          git remote add upstream https://github.com/anhyeryeon2/Algoing
+          git fetch upstream
+          git checkout develop
+          git merge upstream/develop --allow-unrelated-histories --no-edit || echo "Already up to date"
+          git push origin develop
