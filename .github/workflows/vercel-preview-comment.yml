@@ -1,0 +1,25 @@
+name: Comment Vercel Preview URL on PR
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+jobs:
+  comment:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Get branch name
+        id: extract
+        run: |
+          BRANCH_NAME=${{ github.head_ref }}
+          # Replace slashes (/) with dashes (-) to match Vercel preview URL format
+          BRANCH_NAME_SANITIZED=$(echo "$BRANCH_NAME" | sed 's|/|-|g')
+          echo "sanitized_name=${BRANCH_NAME_SANITIZED}" >> $GITHUB_OUTPUT
+
+      - name: Comment on PR with Preview URL
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        run: |
+          COMMENT="✅ Vercel Preview: https://${{ steps.extract.outputs.sanitized_name }}.vercel.app"
+          gh pr comment ${{ github.event.pull_request.number }} --body "$COMMENT"
