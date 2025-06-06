@@ -7,6 +7,7 @@ import { ProblemTabs } from "./components/problem-tabs";
 import MypageIntroSection from "./components/intro-section";
 import { PerformanceChart } from "./components/performance-chart";
 import { useSolvedProblems } from "@/app/hook/mypage/use-solved";
+import { useReviewedProblems } from "@/app/hook/mypage/use-reviewed";
 
 const bookmarkedProblems = [
   {
@@ -48,9 +49,10 @@ const activityData = [
 export default function MyPage() {
   const [activeTab, setActiveTab] = useState("submitted");
   const problemsSectionRef = useRef<HTMLDivElement>(null);
-  // TODO: Replace with actual user ID retrieval logic (e.g., from context, props, or authentication)
+
   const userId = 3;
   const { data: solvedProblems = [] } = useSolvedProblems(userId ?? 0);
+  const { data: reviewedProblems = [] } = useReviewedProblems(userId ?? 0);
 
   const scrollToProblems = (tab: string) => {
     setActiveTab(tab);
