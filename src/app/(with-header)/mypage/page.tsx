@@ -8,33 +8,7 @@ import MypageIntroSection from "./components/intro-section";
 import { PerformanceChart } from "./components/performance-chart";
 import { useSolvedProblems } from "@/app/hook/mypage/use-solved";
 import { useReviewedProblems } from "@/app/hook/mypage/use-reviewed";
-
-const bookmarkedProblems = [
-  {
-    id: 201,
-    title: "최장 증가 부분 수열",
-    difficulty: 4,
-    tags: ["DP", "이분탐색"],
-    bookmarkDate: "2024-01-14",
-    language: "Python",
-  },
-  {
-    id: 202,
-    title: "네트워크 플로우",
-    difficulty: 5,
-    tags: ["그래프", "최대유량"],
-    bookmarkDate: "2024-01-12",
-    language: "C++",
-  },
-  {
-    id: 203,
-    title: "문자열 매칭",
-    difficulty: 3,
-    tags: ["문자열", "KMP"],
-    bookmarkDate: "2024-01-10",
-    language: "Java",
-  },
-];
+import { useBookmarkedProblems } from "@/app/hook/mypage/use-bookmarked";
 
 const activityData = [
   { date: "01-09", problems: 1, day: "월" },
@@ -53,6 +27,7 @@ export default function MyPage() {
   const userId = 3;
   const { data: solvedProblems = [] } = useSolvedProblems(userId ?? 0);
   const { data: reviewedProblems = [] } = useReviewedProblems(userId ?? 0);
+  const { data: bookmarkedProblems = [] } = useBookmarkedProblems(userId ?? 0);
 
   const scrollToProblems = (tab: string) => {
     setActiveTab(tab);
