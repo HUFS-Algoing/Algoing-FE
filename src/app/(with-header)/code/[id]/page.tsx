@@ -53,7 +53,12 @@ export default function Code() {
 
       <div className="flex flex-1 overflow-hidden">
         {showReview ? (
-          <CodeReview onClose={() => setShowReview(false)} />
+          <CodeReview
+            onClose={() => setShowReview(false)}
+            problemNum={problemNum}
+            language={language}
+            code={code}
+          />
         ) : (
           <ProblemInfo />
         )}
