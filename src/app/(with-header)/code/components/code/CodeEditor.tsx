@@ -11,7 +11,7 @@ interface CodeEditorProps {
 export default function CodeEditor({
   code,
   setCode,
-  language = "javascript",
+  language,
 }: CodeEditorProps) {
   return (
     <div className="w-full h-[650px] relative overflow-hidden border border-gray-300">

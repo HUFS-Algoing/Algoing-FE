@@ -2,6 +2,9 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useParams } from "next/navigation";
+import { useHint } from "@/app/hook/problem/use-getHint";
+
 interface FooterProps {
   onSubmitForReview: () => void;
 }
@@ -37,24 +40,32 @@ const TypewriterText = ({
 
 export default function Footer({ onSubmitForReview }: FooterProps) {
   const [showHint, setShowHint] = useState(false);
-  const [typingStep, setTypingStep] = useState(0);
 
-  const handleHintClick = () => {
-    setShowHint(!showHint);
-    if (!showHint) {
-      setTypingStep(1);
-    } else {
-      setTypingStep(0);
+  const [hintContent, setHintContent] = useState(""); // 출력할 힌트
+  const [hintOrder, setHintOrder] = useState(1); // 현재 요청 중인 순서
+
+  const params = useParams();
+  const problemId = Number(params?.id);
+  const userId = 3;
+
+  const { refetch, isLoading } = useHint(problemId, hintOrder, userId);
+
+  const handleHintClick = async () => {
+    const open = !showHint;
+    setShowHint(open);
+
+    if (open) {
+      const { data } = await refetch();
+      if (data) {
+        setHintContent(data.content);
+        setHintOrder(data.order + 1);
+      }
     }
   };
 
-  const handleStepComplete = () => {
-    setTypingStep((prev) => prev + 1);
-  };
-
   return (
-    <footer className="w-full fixed bottom-0 left-0 border-t bg-white py-2 px-8 flex items-center justify-between">
-      {/* 왼쪽 (이전/다음 버튼) */}
+    <footer className="w-full fixed bottom-0 left-0 border-t bg-white py-2 px-8 flex items-center justify-between z-10">
+      {/* 왼쪽: 힌트 보기 버튼 */}
       <div className="relative">
         <button
           onClick={handleHintClick}
@@ -62,6 +73,7 @@ export default function Footer({ onSubmitForReview }: FooterProps) {
         >
           힌트 보기
         </button>
+
         <AnimatePresence>
           {showHint && (
             <motion.div
@@ -79,65 +91,14 @@ export default function Footer({ onSubmitForReview }: FooterProps) {
                       🤖
                     </div>
                     <div className="flex-1">
-                      <div className="relative">
-                        <div className="absolute -left-2 top-3 w-3 h-3 bg-blue-100 transform rotate-45" />
-                        <div className="bg-blue-100 rounded-lg p-4 space-y-3 w-[300px]">
-                          {typingStep >= 1 && (
-                            <p className="text-md font-semibold text-gray-700 leading-relaxed">
-                              <TypewriterText
-                                text="이 문제는 이진 탐색(Binary Search)을 사용하면 효율적으로 해결할 수 있어요! 다음과 같은 접근 방법을 고려해보세요:"
-                                delay={30}
-                                onComplete={handleStepComplete}
-                              />
-                            </p>
-                          )}
-                          {typingStep >= 2 && (
-                            <ul className="text-md text-gray-700 space-y-2 list-disc pl-4">
-                              <li>
-                                <TypewriterText
-                                  text="숫자 카드 배열을 먼저 정렬해주세요."
-                                  delay={30}
-                                  onComplete={handleStepComplete}
-                                />
-                              </li>
-                              {typingStep >= 3 && (
-                                <li>
-                                  <TypewriterText
-                                    text="이진 탐색을 사용하여 각 숫자가 배열에 존재하는지 확인하세요."
-                                    delay={30}
-                                    onComplete={handleStepComplete}
-                                  />
-                                </li>
-                              )}
-                              {typingStep >= 4 && (
-                                <li>
-                                  <TypewriterText
-                                    text="시간 복잡도는 O(M * log N)이 됩니다. (M: 찾을 숫자 개수, N: 카드 개수)"
-                                    delay={30}
-                                    onComplete={handleStepComplete}
-                                  />
-                                </li>
-                              )}
-                              {typingStep >= 5 && (
-                                <li>
-                                  <TypewriterText
-                                    text="선형 탐색을 사용하면 O(M * N)이 되어 시간 초과가 발생할 수 있어요."
-                                    delay={30}
-                                    onComplete={handleStepComplete}
-                                  />
-                                </li>
-                              )}
-                            </ul>
-                          )}
-                          {typingStep >= 6 && (
-                            <p className="text-md text-gray-700 leading-relaxed">
-                              <TypewriterText
-                                text="이진 탐색의 기본 아이디어는 정렬된 배열에서 중간값을 기준으로 찾고자 하는 값이 왼쪽에 있는지 오른쪽에 있는지 판단하는 거예요!"
-                                delay={30}
-                              />
-                            </p>
-                          )}
-                        </div>
+                      <div className="bg-blue-100 rounded-lg p-4 space-y-3 w-[300px] text-sm text-gray-800 leading-relaxed">
+                        {isLoading ? (
+                          <p>힌트 불러오는 중...</p>
+                        ) : hintContent ? (
+                          <TypewriterText text={hintContent} delay={25} />
+                        ) : (
+                          <p>힌트가 없습니다.</p>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -147,6 +108,8 @@ export default function Footer({ onSubmitForReview }: FooterProps) {
           )}
         </AnimatePresence>
       </div>
+
+      {/* 가운데: 이전 / 다음 */}
       <div className="absolute left-1/2 transform -translate-x-1/2 flex items-center gap-4">
         <button className="flex items-center gap-1 text-gray-700">
           <span>←</span>
@@ -158,7 +121,7 @@ export default function Footer({ onSubmitForReview }: FooterProps) {
         </button>
       </div>
 
-      {/* 오른쪽 (코드 실행 / 제출 후 저장) */}
+      {/* 오른쪽: 실행 / 제출 */}
       <div className="flex items-center gap-3">
         <button className="px-4 py-3 bg-gray-200 text-gray-700 rounded-md">
           코드 실행

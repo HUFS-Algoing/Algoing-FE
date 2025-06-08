@@ -41,6 +41,7 @@ export interface WeaknessRecommendation extends RecommendationItem {
   finalScore: number;
 }
 export interface AllRecommendationsResponse {
+  recommendationSessionId: any;
   dailyRecommendations: any[];
   incProblemRecommendations: any[];
   weaknessRecommendations: any[];

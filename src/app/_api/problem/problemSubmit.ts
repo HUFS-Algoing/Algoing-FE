@@ -5,6 +5,7 @@ export interface SubmitRequest {
   problemNum: number;
   language: string;
   code: string;
+  recommendationSessionId: string;
 }
 
 export const problemSubmit = async (payload: SubmitRequest) => {
