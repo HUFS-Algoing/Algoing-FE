@@ -118,7 +118,6 @@ export default function ProfileForm() {
         <button
           onClick={() =>
             submitBOJ({
-              handle: baekjoonId,
               bojId: baekjoonId,
               bojPassword: password,
             })

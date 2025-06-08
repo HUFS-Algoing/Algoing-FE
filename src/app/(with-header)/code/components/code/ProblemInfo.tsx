@@ -1,93 +1,215 @@
 "use client";
 
-import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useParams } from "next/navigation";
+import { useProblemDetail } from "@/app/hook/problem/use-getProblemInfo";
+import { Badge } from "@/app/(with-header)/code/components/code/Badge";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/app/(with-header)/code/components/code/Card";
+
+import { Clock, MemoryStick, Tag, Trophy } from "lucide-react";
 
 export default function ProblemInfo() {
-  const [showHint, setShowHint] = useState(false);
+  const params = useParams();
+  const problemId = Number(params?.id);
+
+  const { data, isLoading, isError } = useProblemDetail(problemId);
+
+  if (isLoading) {
+    return (
+      <aside className="w-2/5 py-6 px-6">
+        <div className="animate-pulse space-y-4">
+          <div className="h-8 bg-gray-200 rounded w-3/4"></div>
+          <div className="h-4 bg-gray-200 rounded w-full"></div>
+          <div className="h-4 bg-gray-200 rounded w-5/6"></div>
+        </div>
+      </aside>
+    );
+  }
+
+  if (isError || !data) {
+    return (
+      <aside className="w-2/5 py-6 px-6">
+        <Card>
+          <CardContent className="pt-6">
+            <p className="text-center text-muted-foreground">
+              문제를 불러올 수 없습니다.
+            </p>
+          </CardContent>
+        </Card>
+      </aside>
+    );
+  }
+
+  const getDifficultyColor = (level: number) => {
+    if (level <= 5) return "bg-green-500";
+    if (level <= 10) return "bg-yellow-500";
+    if (level <= 15) return "bg-orange-500";
+    if (level <= 20) return "bg-red-500";
+    return "bg-purple-500";
+  };
+
+  const getDifficultyText = (level: number) => {
+    if (level <= 5) return "Bronze";
+    if (level <= 10) return "Silver";
+    if (level <= 15) return "Gold";
+    if (level <= 20) return "Platinum";
+    return "Diamond";
+  };
 
   return (
-    <aside className="w-2/5 py-6 border-r overflow-y-auto px-12">
-      <div className="mb-6">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-2xl font-semibold">숫자 카드</h2>
-          <button
-            onClick={() => setShowHint(!showHint)}
-            className="relative p-2 hover:bg-gray-100 rounded-full transition-colors"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={1.5}
-              stroke="currentColor"
-              className="w-6 h-6"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z"
-              />
-            </svg>
-            <AnimatePresence>
-              {showHint && (
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.8, y: 10 }}
-                  animate={{ opacity: 1, scale: 1, y: 0 }}
-                  exit={{ opacity: 0, scale: 0.8, y: 10 }}
-                  transition={{ duration: 0.2 }}
-                  className="absolute right-0 top-full mt-2 w-72 bg-white rounded-lg shadow-lg border p-4 z-10"
-                >
-                  <div className="relative">
-                    <div className="absolute -top-2 right-4 w-4 h-4 bg-white transform rotate-45 border-t border-l" />
-                    <div className="bg-white rounded-lg p-3">
-                      <div className="flex items-start gap-2">
-                        <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold">
-                          AI
-                        </div>
-                        <div className="flex-1">
-                          <p className="text-sm text-gray-700">
-                            이 문제는 이진 탐색을 사용하면 효율적으로 해결할 수
-                            있어요! 정렬된 배열에서 특정 숫자를 찾는 것이
-                            핵심이에요.
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </button>
-        </div>
-        <p>
-          숫자 카드는 정수 하나가 적혀져 있는 카드이다. 상근이는 숫자 카드 N개를
-          가지고 있다. 정수 M개가 주어졌을 때, 이 수가 적혀있는 숫자 카드를
-          상근이가 가지고 있는지 아닌지를 구하는 프로그램을 작성하시오.
-        </p>
-      </div>
+    <aside className="w-2/5 h-full min-h-0 py-6 border-r overflow-y-auto px-6 bg-gray-50/50">
+      <div className="space-y-6">
+        {/* Header */}
+        <div>
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-3">
+              <h1 className="text-2xl font-bold text-gray-900">
+                {data.problemId}. {data.title}
+              </h1>
+              <Badge
+                variant="secondary"
+                className={`${getDifficultyColor(data.level)} text-white border-0`}
+              >
+                <Trophy className="w-3 h-3 mr-1" />
+                {getDifficultyText(data.level)} {data.level}
+              </Badge>
+            </div>
+          </div>
 
-      <div className="mb-6">
-        <h2 className="text-xl font-semibold mb-2">입력</h2>
-        <p className="mb-2">
-          첫째 줄에 상근이가 가지고 있는 숫자 카드의 개수 N(1 ≤ N ≤ 500,000)이
-          주어진다. 둘째 줄에는 숫자 카드에 적혀있는 정수가 주어진다. 숫자
-          카드에 적혀있는 수는 -10,000,000보다 크거나 같고, 10,000,000보다
-          작거나 같다. 두 숫자 카드에 같은 수가 적혀있는 경우는 없다.
-        </p>
-        <p>
-          셋째 줄에는 M(1 ≤ M ≤ 500,000)이 주어진다. 넷째 줄에는 상근이가 가지고
-          있는 숫자 카드인지 아닌지를 구해야 할 M개의 정수가 주어지며, 이 수는
-          공백으로 구분되어져 있다. 이 수도 -10,000,000보다 크거나 같고,
-          10,000,000보다 작거나 같다.
-        </p>
-      </div>
-      <div className="mb-6">
-        <h2 className="text-xl font-semibold mb-2">출력</h2>
-        <p className="mb-2">
-          첫째 줄에 입력으로 주어진 M개의 수에 대해서, 각 수가 적힌 숫자 카드를
-          상근이가 가지고 있으면 1을, 아니면 0을 공백으로 구분해 출력한다.
-        </p>
+          {/* Constraints */}
+          <div className="flex items-center gap-4 text-sm text-muted-foreground mb-4">
+            <div className="flex items-center gap-1">
+              <Clock className="w-4 h-4" />
+              <span>{data.time}</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <MemoryStick className="w-4 h-4" />
+              <span>{data.memory}</span>
+            </div>
+          </div>
+
+          {/* Tags */}
+          {data.tagNames && (
+            <div className="flex items-center gap-2 mb-4">
+              <Tag className="w-4 h-4 text-muted-foreground" />
+              <div className="flex flex-wrap gap-1">
+                {data.tagNames.split(",").map((tag, index) => (
+                  <Badge key={index} variant="outline" className="text-xs">
+                    {tag.trim()}
+                  </Badge>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Problem Description */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">문제</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div
+              className="prose prose-sm max-w-none"
+              dangerouslySetInnerHTML={{ __html: data.description }}
+            />
+          </CardContent>
+        </Card>
+
+        {/* Input */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">입력</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-sm leading-relaxed">{data.input}</p>
+          </CardContent>
+        </Card>
+
+        {/* Output */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">출력</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-sm leading-relaxed">{data.output}</p>
+          </CardContent>
+        </Card>
+
+        {/* Sample Input/Output */}
+        {(data.sampleInput1 || data.sampleOutput1) && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg">예제</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {data.sampleInput1 && (
+                <div>
+                  <h4 className="font-medium text-sm mb-2 text-muted-foreground">
+                    예제 입력 1
+                  </h4>
+                  <div className="bg-gray-100 p-3 rounded-md font-mono text-sm">
+                    <pre className="whitespace-pre-wrap">
+                      {data.sampleInput1}
+                    </pre>
+                  </div>
+                </div>
+              )}
+              {data.sampleOutput1 && (
+                <div>
+                  <h4 className="font-medium text-sm mb-2 text-muted-foreground">
+                    예제 출력 1
+                  </h4>
+                  <div className="bg-gray-100 p-3 rounded-md font-mono text-sm">
+                    <pre className="whitespace-pre-wrap">
+                      {data.sampleOutput1}
+                    </pre>
+                  </div>
+                </div>
+              )}
+              {data.sampleInput2 && (
+                <div>
+                  <h4 className="font-medium text-sm mb-2 text-muted-foreground">
+                    예제 입력 2
+                  </h4>
+                  <div className="bg-gray-100 p-3 rounded-md font-mono text-sm">
+                    <pre className="whitespace-pre-wrap">
+                      {data.sampleInput2}
+                    </pre>
+                  </div>
+                </div>
+              )}
+              {data.sampleOutput2 && (
+                <div>
+                  <h4 className="font-medium text-sm mb-2 text-muted-foreground">
+                    예제 출력 2
+                  </h4>
+                  <div className="bg-gray-100 p-3 rounded-md font-mono text-sm">
+                    <pre className="whitespace-pre-wrap">
+                      {data.sampleOutput2}
+                    </pre>
+                  </div>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Additional Info */}
+        {data.limit && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg">제한</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm leading-relaxed">{data.limit}</p>
+            </CardContent>
+          </Card>
+        )}
       </div>
     </aside>
   );
