@@ -11,7 +11,6 @@ interface Props {
 export function PerformanceChart({ userId }: Props) {
   const { data: solvedProblems = [] } = useSolvedProblems(userId);
 
-  // ✅ 태그별 카운트
   const tagMap = new Map<string, number>();
   solvedProblems.forEach((p) => {
     const tags = p.tag?.split(",").map((t) => t.trim()) || [];
@@ -20,12 +19,10 @@ export function PerformanceChart({ userId }: Props) {
     });
   });
 
-  // ✅ 많이 푼 태그 TOP 5
   const sortedTags = [...tagMap.entries()]
     .sort((a, b) => b[1] - a[1])
     .slice(0, 5);
 
-  // ✅ 색상 팔레트
   const tagColors = [
     { color: "from-emerald-400 to-emerald-600", bg: "bg-emerald-50" },
     { color: "from-blue-400 to-blue-600", bg: "bg-blue-50" },
@@ -36,7 +33,6 @@ export function PerformanceChart({ userId }: Props) {
     { color: "from-red-400 to-red-600", bg: "bg-red-50" },
   ];
 
-  // ✅ 차트 데이터 구성
   const chartData = sortedTags.map(([tag, count], index) => {
     const colorSet = tagColors[index % tagColors.length];
     return {
@@ -47,7 +43,7 @@ export function PerformanceChart({ userId }: Props) {
     };
   });
 
-  // ✅ 가장 많이 푼 태그의 수 → 상대 퍼센트 기준
+  //  가장 많이 푼 태그의 수 → 상대 퍼센트 기준
   const maxSolved = Math.max(...chartData.map((d) => d.solved));
 
   return (
@@ -74,12 +70,10 @@ export function PerformanceChart({ userId }: Props) {
             transition={{ delay: 0.6 + index * 0.1 }}
             className={`flex items-center gap-4 p-3 rounded-xl ${item.bgColor} border border-gray-100`}
           >
-            {/* 태그 이름 */}
             <span className="text-sm font-semibold text-gray-700 w-24 truncate">
               {item.tag}
             </span>
 
-            {/* 퍼센트 바 */}
             <div className="flex-1 bg-gray-200 rounded-full h-3 overflow-hidden">
               <motion.div
                 initial={{ width: 0 }}
@@ -94,7 +88,6 @@ export function PerformanceChart({ userId }: Props) {
               />
             </div>
 
-            {/* 문제 개수 / 퍼센트 */}
             <span className="text-sm font-bold text-gray-700 w-10 text-right">
               {item.solved}
             </span>
