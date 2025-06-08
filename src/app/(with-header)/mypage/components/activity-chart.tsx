@@ -1,13 +1,12 @@
-// components/ActivityChart.tsx
 "use client";
 
 import { Calendar } from "lucide-react";
 import { motion } from "framer-motion";
 
 interface ActivityData {
-  date: string;
-  problems: number;
-  day: string;
+  date: string; // "2025-06-08"
+  count: number; // 문제 수
+  day: string; // 요일 (예: "월")
 }
 
 export default function ActivityChart({
@@ -15,7 +14,7 @@ export default function ActivityChart({
 }: {
   activityData: ActivityData[];
 }) {
-  const maxProblems = Math.max(...activityData.map((d) => d.problems));
+  const maxCount = Math.max(...activityData.map((d) => d.count));
 
   return (
     <motion.div
@@ -31,6 +30,7 @@ export default function ActivityChart({
         </h3>
         <div className="text-sm text-gray-500">최근 7일</div>
       </div>
+
       <div className="relative h-48 mb-4">
         <svg className="w-full h-full" viewBox="0 0 400 200">
           {[0, 1, 2, 3].map((line) => (
@@ -51,19 +51,19 @@ export default function ActivityChart({
             </linearGradient>
           </defs>
           <path
-            d={`M 40 ${200 - (activityData[0].problems / maxProblems) * 120 - 40} ${activityData
+            d={`M 40 ${200 - (activityData[0].count / maxCount) * 120 - 40} ${activityData
               .map(
                 (point, index) =>
-                  `L ${40 + index * 50} ${200 - (point.problems / maxProblems) * 120 - 40}`
+                  `L ${40 + index * 50} ${200 - (point.count / maxCount) * 120 - 40}`
               )
               .join(" ")} L 390 160 L 40 160 Z`}
             fill="url(#areaGradient)"
           />
           <path
-            d={`M 40 ${200 - (activityData[0].problems / maxProblems) * 120 - 40} ${activityData
+            d={`M 40 ${200 - (activityData[0].count / maxCount) * 120 - 40} ${activityData
               .map(
                 (point, index) =>
-                  `L ${40 + index * 50} ${200 - (point.problems / maxProblems) * 120 - 40}`
+                  `L ${40 + index * 50} ${200 - (point.count / maxCount) * 120 - 40}`
               )
               .join(" ")}`}
             stroke="#6366f1"
@@ -74,7 +74,7 @@ export default function ActivityChart({
           />
           {activityData.map((point, index) => {
             const x = 40 + index * 50;
-            const y = 200 - (point.problems / maxProblems) * 120 - 40;
+            const y = 200 - (point.count / maxCount) * 120 - 40;
             return (
               <g key={index}>
                 <circle
@@ -102,9 +102,10 @@ export default function ActivityChart({
           ))}
         </svg>
       </div>
+
       <div className="flex items-center justify-between text-sm text-gray-600">
         <span>
-          총 {activityData.reduce((sum, d) => sum + d.problems, 0)} 문제 해결
+          총 {activityData.reduce((sum, d) => sum + d.count, 0)} 문제 해결
         </span>
         <span className="flex items-center gap-1">
           <div className="w-3 h-3 bg-indigo-500 rounded-full" /> 문제 수
