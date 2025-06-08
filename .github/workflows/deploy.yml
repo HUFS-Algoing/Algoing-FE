@@ -1,9 +1,8 @@
 name: Sync upstream develop branch
 
 on:
-  schedule:
-    - cron: "0 * * * *" # 매 시간마다 실행
-  workflow_dispatch:
+  repository_dispatch:
+    types: [sync-develop]
 
 jobs:
   sync:
@@ -11,7 +10,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         with:
-          token: ${{ secrets.AUTO_ACTIONS }}
+          token: ${{ secrets.GH_TOKEN }}
 
       - name: Setup Git
         run: |

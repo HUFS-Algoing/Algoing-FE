@@ -9,17 +9,25 @@ import { PerformanceChart } from "./components/performance-chart";
 import { useSolvedProblems } from "@/app/hook/mypage/use-solved";
 import { useReviewedProblems } from "@/app/hook/mypage/use-reviewed";
 import { useBookmarkedProblems } from "@/app/hook/mypage/use-bookmarked";
+import { useZandi } from "@/app/hook/useZandi";
 import { PageLoading } from "@/app/_components/loading";
+import type { ContributionDay } from "@/app/hook/useZandi";
 
-const activityData = [
-  { date: "01-09", problems: 1, day: "월" },
-  { date: "01-10", problems: 2, day: "화" },
-  { date: "01-11", problems: 0, day: "수" },
-  { date: "01-12", problems: 3, day: "목" },
-  { date: "01-13", problems: 1, day: "금" },
-  { date: "01-14", problems: 2, day: "토" },
-  { date: "01-15", problems: 1, day: "일" },
-];
+function getRecentActivityData(zandi: ContributionDay[]) {
+  const today = new Date();
+  return Array.from({ length: 7 }).map((_, i) => {
+    const d = new Date(today);
+    d.setDate(d.getDate() - (6 - i));
+    const dateStr = d.toISOString().slice(0, 10);
+    const count = zandi.find((c) => c.date === dateStr)?.count ?? 0;
+    const day = d.toLocaleDateString("ko-KR", { weekday: "short" });
+    return {
+      date: dateStr,
+      count,
+      day,
+    };
+  });
+}
 
 export default function MyPage() {
   const [activeTab, setActiveTab] = useState("submitted");
@@ -28,13 +36,20 @@ export default function MyPage() {
   const userId = 3;
 
   const { data: solvedProblems = [], isLoading: isSolvedLoading } =
-    useSolvedProblems(userId ?? 0);
+    useSolvedProblems(userId);
   const { data: reviewedProblems = [], isLoading: isReviewedLoading } =
-    useReviewedProblems(userId ?? 0);
+    useReviewedProblems(userId);
   const { data: bookmarkedProblems = [], isLoading: isBookmarkedLoading } =
-    useBookmarkedProblems(userId ?? 0);
+    useBookmarkedProblems(userId);
+  const { data: zandi = [], isLoading: isZandiLoading } = useZandi(userId);
 
-  if (!userId || isSolvedLoading || isReviewedLoading || isBookmarkedLoading) {
+  if (
+    !userId ||
+    isSolvedLoading ||
+    isReviewedLoading ||
+    isBookmarkedLoading ||
+    isZandiLoading
+  ) {
     return <PageLoading />;
   }
 
@@ -48,6 +63,9 @@ export default function MyPage() {
     }, 100);
   };
 
+  const activityData: { date: string; count: number; day: string }[] =
+    getRecentActivityData(zandi);
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 pt-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -60,7 +78,7 @@ export default function MyPage() {
         />
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
           <ActivityChart activityData={activityData} />
-          <PerformanceChart />
+          <PerformanceChart userId={userId} />
         </div>
         <div ref={problemsSectionRef}>
           <ProblemTabs

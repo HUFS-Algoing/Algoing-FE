@@ -27,13 +27,8 @@ export default function UserDashboard() {
               Lv. 5
             </span>
           </div>
-          <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
-            134 문제 해결
-          </p>
-          <Progress
-            value={60}
-            className="mt-3 h-3 bg-gray-200 dark:bg-neutral-700"
-          />
+
+          <Progress userId={3} />
         </div>
 
         <div className="flex flex-col md:flex-row gap-2">
@@ -49,7 +44,8 @@ export default function UserDashboard() {
 
       <div className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-6">
         <div className="border dark:border-gray-700 rounded-xl p-4">
-          <ContributionCalendar year={2025} month={3} />
+          <ContributionCalendar userId={3} year={2025} month={6} />
+          {/* userid하드코딩 */}
         </div>
 
         <div className="flex flex-col gap-4">
