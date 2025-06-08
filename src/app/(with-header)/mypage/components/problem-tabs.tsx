@@ -1,5 +1,3 @@
-// components/ProblemTabs.tsx
-
 "use client";
 
 import { motion } from "framer-motion";
@@ -13,21 +11,6 @@ interface ProblemTabsProps {
   bookmarkedProblems: any[];
 }
 
-// 난이도 색상 함수
-const getDifficultyColor = (difficulty: string) => {
-  switch (difficulty) {
-    case "쉬움":
-      return "bg-green-100 text-green-800 border-green-200";
-    case "보통":
-      return "bg-yellow-100 text-yellow-800 border-yellow-200";
-    case "어려움":
-      return "bg-red-100 text-red-800 border-red-200";
-    default:
-      return "bg-gray-100 text-gray-800 border-gray-200";
-  }
-};
-
-// 언어 색상 함수
 const getLanguageColor = (language: string) => {
   switch (language) {
     case "python":
@@ -189,42 +172,35 @@ export function ProblemTabs({
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
             {bookmarkedProblems.map((problem, index) => (
               <motion.div
-                key={problem.id}
+                key={problem.problemId}
                 initial={{ y: 20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
-                transition={{ delay: index * 0.1 }}
-                className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-4 hover:shadow-lg transition-all duration-300 hover:-translate-y-1 border border-gray-200 group"
+                transition={{ delay: index * 0.05 }}
+                className="bg-white rounded-xl p-5 shadow hover:shadow-lg transition-transform duration-300 hover:-translate-y-1 border border-gray-200 group"
               >
                 <div className="flex items-start justify-between mb-3">
                   <h4 className="font-semibold text-gray-900 line-clamp-1 group-hover:text-indigo-600 transition-colors">
                     {problem.title}
                   </h4>
-                  <span
-                    className={`px-2 py-1 rounded-lg text-xs font-bold border ${getDifficultyColor(problem.difficulty)} shadow-sm`}
-                  >
-                    {problem.difficulty}
-                  </span>
-                </div>
-                <div className="flex flex-wrap gap-1 mb-3">
-                  {problem.tags.map((tag: string) => (
-                    <span
-                      key={tag}
-                      className="px-2 py-1 bg-blue-100 text-blue-700 text-xs rounded-md font-medium"
+                  <div className="text-yellow-400">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="currentColor"
+                      viewBox="0 0 24 24"
+                      strokeWidth={1.5}
+                      stroke="currentColor"
+                      className="w-5 h-5"
                     >
-                      #{tag}
-                    </span>
-                  ))}
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M11.48 3.499a.562.562 0 011.04 0l2.063 4.185a.563.563 0 00.424.307l4.605.669a.563.563 0 01.312.96l-3.33 3.245a.563.563 0 00-.162.498l.786 4.582a.563.563 0 01-.818.593l-4.115-2.163a.563.563 0 00-.523 0l-4.115 2.163a.563.563 0 01-.818-.593l.786-4.582a.563.563 0 00-.162-.498l-3.33-3.245a.563.563 0 01.312-.96l4.605-.669a.563.563 0 00.424-.307l2.063-4.185z"
+                      />
+                    </svg>
+                  </div>
                 </div>
-                <div className="flex items-center justify-between text-xs">
-                  <span
-                    className={`px-2 py-1 rounded-md font-medium ${getLanguageColor(problem.language)}`}
-                  >
-                    {problem.language}
-                  </span>
-                  <span className="text-gray-500 font-medium">
-                    {problem.bookmarkDate}
-                  </span>
-                </div>
+
+                <div className="text-sm text-gray-500">{problem.problemId}</div>
               </motion.div>
             ))}
           </div>

@@ -28,9 +28,9 @@ export default function ContributionCalendar({
     .map((_, index) => {
       const day = index - firstDay + 1;
       if (day > 0 && day <= daysInMonth) {
-        const dateStr = `${currentYear}-${currentMonth
-          .toString()
-          .padStart(2, "0")}-${day.toString().padStart(2, "0")}`;
+        const dateObj = new Date(currentYear, currentMonth - 1, day);
+        const dateStr = dateObj.toLocaleDateString("sv-SE");
+
         const contribution = contributions.find((c) => c.date === dateStr);
         return {
           day,
@@ -99,9 +99,9 @@ export default function ContributionCalendar({
             ))}
           </div>
 
-          <div className="space-y-2">
+          <div className="space-y-1">
             {weeks.map((week, weekIndex) => (
-              <div key={weekIndex} className="grid grid-cols-7 gap-2">
+              <div key={weekIndex} className="grid grid-cols-7 gap-1">
                 {week.map((day, dayIndex) => (
                   <div
                     key={dayIndex}
