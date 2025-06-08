@@ -44,7 +44,8 @@ export default function UserDashboard() {
 
       <div className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-6">
         <div className="border dark:border-gray-700 rounded-xl p-4">
-          <ContributionCalendar year={2025} month={3} />
+          <ContributionCalendar userId={3} year={2025} month={3} />
+          {/* userid하드코딩 */}
         </div>
 
         <div className="flex flex-col gap-4">

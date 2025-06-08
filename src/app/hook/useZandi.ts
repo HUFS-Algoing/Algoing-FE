@@ -3,17 +3,20 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { apiGet } from "../_api/methods";
+
 export interface ContributionDay {
   date: string;
   count: number;
 }
 
-export const useZandi = () => {
+export const useZandi = (userId: number) => {
   return useQuery<ContributionDay[]>({
-    queryKey: ["zandi"],
+    queryKey: ["zandi", userId],
     queryFn: async () => {
-      return await apiGet<ContributionDay[]>("/myinfo/zandi");
+      const query = `?userId=${userId}`;
+      return await apiGet<ContributionDay[]>(`/myinfo/zandi${query}`);
     },
-    staleTime: 1000 * 60 * 5, // 5분 캐싱
+    enabled: !!userId, // userId가 있을 때만 실행
+    staleTime: 1000 * 60 * 5,
   });
 };

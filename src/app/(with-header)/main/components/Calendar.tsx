@@ -6,16 +6,18 @@ import { cn } from "@/app/lib/utils";
 import { useZandi } from "@/app/hook/useZandi";
 
 export default function ContributionCalendar({
+  userId,
   year,
   month,
 }: {
+  userId: number;
   year: number;
   month: number;
 }) {
   const [currentYear, setCurrentYear] = useState(year);
   const [currentMonth, setCurrentMonth] = useState(month);
 
-  const { data: contributions = [], isLoading } = useZandi();
+  const { data: contributions = [], isLoading } = useZandi(userId);
 
   const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
   const firstDay = new Date(currentYear, currentMonth - 1, 1).getDay();
