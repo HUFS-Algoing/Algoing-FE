@@ -1,5 +1,6 @@
 "use client";
 
+import { Badge } from "@/app/_components/Badge";
 import { useAllRecommendations } from "@/app/hook/recommend/use-all-recommend";
 import { useLogProblemClick } from "@/app/hook/recommend/use-log-click";
 import { Award } from "lucide-react";
@@ -77,14 +78,9 @@ export default function RecommendedProblems() {
           className="bg-gray-50 dark:bg-neutral-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700 flex flex-col gap-2 hover:shadow-md transition-shadow"
         >
           <div className="flex items-center justify-between">
-            <span className="text-xs px-2 py-1 rounded-md bg-gray-300 dark:bg-gray-700 text-gray-800 dark:text-gray-200">
-              {problem.level}{" "}
-            </span>
-            <span className="text-xs text-purple-500 dark:text-purple-400 font-semibold">
-              +{problem.score} EXP
-            </span>
+            <Badge variant="outline">Lv. {problem.level}</Badge>
+            <Badge variant="outline">+{problem.score} EXP</Badge>
           </div>
-
           <p className="text-sm font-semibold mt-1 truncate">
             {problem.problemId}. {problem.title}
           </p>

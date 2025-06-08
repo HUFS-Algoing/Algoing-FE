@@ -1,4 +1,6 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+"use client";
+
+import { Badge } from "@/app/_components/Badge";
 
 interface ProblemCardProps {
   id: number;
@@ -6,47 +8,37 @@ interface ProblemCardProps {
   level: number;
   tags: string[];
   isSolved: boolean;
+  onClick?: () => void;
 }
 
-const ProblemCard = ({ title, level, tags, isSolved }: ProblemCardProps) => {
-  const getLevelColor = (level: number) => {
-    switch (level) {
-      case 1:
-        return "bg-green-100 text-green-700";
-      case 2:
-        return "bg-blue-100 text-blue-700";
-      case 3:
-        return "bg-indigo-100 text-indigo-700";
-      case 4:
-        return "bg-purple-100 text-purple-700";
-      case 5:
-        return "bg-red-100 text-red-700";
-      default:
-        return "bg-gray-100 text-gray-700";
-    }
-  };
-
+const ProblemCard = ({
+  title,
+  level,
+  tags,
+  isSolved,
+  onClick,
+}: ProblemCardProps) => {
   return (
-    <div className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-all duration-200 hover:-translate-y-1">
+    <div
+      onClick={onClick}
+      className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-all duration-200 hover:-translate-y-1"
+    >
       <div className="flex justify-between items-start mb-2">
-        <h3 className="text-base font-medium text-gray-900 line-clamp-1">
+        <h3 className="text-base font-bold text-gray-900 line-clamp-1">
           {title}
         </h3>
         <div
-          className={`flex items-center justify-center w-8 h-8 rounded-md ${getLevelColor(level)}`}
+          className={`flex items-center justify-center w-15 h-8 rounded-md whitespace-nowrap`}
         >
-          <span className="font-semibold text-sm">{level}</span>
+          <Badge variant="secondary">Lv. {level}</Badge>
         </div>
       </div>
       {tags.length > 0 && (
         <div className="mt-2 flex flex-wrap gap-1">
           {tags.map((tag) => (
-            <span
-              key={tag}
-              className="inline-block bg-gray-100 text-gray-800 text-xs px-2 py-1 rounded"
-            >
-              # {tag}
-            </span>
+            <Badge key={tag} variant="outline">
+              {tag}
+            </Badge>
           ))}
         </div>
       )}

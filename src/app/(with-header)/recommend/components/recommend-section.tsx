@@ -1,5 +1,8 @@
+"use client";
+
 import ProblemCard from "../components/problem-card";
 import Carousel from "../components/carousel";
+import { useRouter } from "next/navigation";
 
 interface RecommendSectionProps {
   title: string;
@@ -17,7 +20,9 @@ export function RecommendSection({
   icon,
   problems,
 }: RecommendSectionProps) {
+  const router = useRouter();
   if (!Array.isArray(problems)) return null;
+
   return (
     <section className="mb-16">
       <div className="flex items-center mb-6">
@@ -39,6 +44,7 @@ export function RecommendSection({
                 level={problem.level ?? 1}
                 tags={problem.tag?.split(",") ?? []}
                 isSolved={false}
+                onClick={() => router.push(`/code/${problem.problemId}`)}
               />
             ))}
           </Carousel>

@@ -2,7 +2,6 @@
 
 import { useParams } from "next/navigation";
 import { useProblemDetail } from "@/app/hook/problem/use-getProblemInfo";
-import { Badge } from "@/app/(with-header)/code/components/code/Badge";
 import {
   Card,
   CardContent,
@@ -11,6 +10,7 @@ import {
 } from "@/app/(with-header)/code/components/code/Card";
 
 import { Clock, MemoryStick, Tag, Trophy } from "lucide-react";
+import { Badge } from "@/app/_components/Badge";
 
 export default function ProblemInfo() {
   const params = useParams();
