@@ -63,10 +63,10 @@ export default function Header() {
             transition={{ type: "spring", stiffness: 400, damping: 10 }}
           >
             <Image
-              src={isDarkMode ? "/DarkModeLogo.png" : "/LightModeLogo.png"}
+              src={isDarkMode ? "/img/RealLogo.png" : "/img/RealLogo.png"}
               alt="ALGOING Logo"
-              width={100}
-              height={36}
+              width={120}
+              height={50}
               className="h-8 sm:h-9 w-auto"
             />
             <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-indigo-500 to-purple-500 transition-all duration-300 group-hover:w-full"></span>

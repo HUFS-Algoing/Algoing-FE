@@ -6,8 +6,22 @@ import Progress from "./components/Progress";
 import RecommendedProblems from "./components/Recommend";
 import { FaCode } from "react-icons/fa";
 import Image from "next/image";
+import { useMyInfo } from "@/app/hook/user/useLoadUser";
+import { useEffect } from "react";
+import { useUserStore } from "@/app/_store/use-userStore";
 
 export default function UserDashboard() {
+  const { data: myInfo } = useMyInfo();
+  const setUser = useUserStore((state) => state.setUser);
+
+  useEffect(() => {
+    console.log("✅ useEffect 진입");
+    if (myInfo) {
+      console.log("✅ /myinfo 응답값:", myInfo);
+      setUser(myInfo); // Zustand store에 저장
+    }
+  }, [myInfo, setUser]);
+
   return (
     <div className="max-w-6xl mx-auto px-6 py-12">
       <div className="flex flex-col md:flex-row items-center md:items-start gap-6 mb-16">
