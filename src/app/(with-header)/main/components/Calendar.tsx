@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/app/lib/utils";
-import { useZandi } from "@/app/hook/useZandi";
+import { useZandi } from "@/app/hook/use-zandi";
 
 export default function ContributionCalendar({
   userId,

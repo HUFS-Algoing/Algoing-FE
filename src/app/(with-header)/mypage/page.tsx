@@ -4,13 +4,13 @@ import { useState, useRef } from "react";
 import StatsCards from "./components/stats-cards";
 import { ProblemTabs } from "./components/problem-tabs";
 import MypageIntroSection from "./components/intro-section";
-import { PerformanceChart } from "./components/performance-chart";
 import { useSolvedProblems } from "@/app/hook/mypage/use-solved";
 import { useReviewedProblems } from "@/app/hook/mypage/use-reviewed";
 import { useBookmarkedProblems } from "@/app/hook/mypage/use-bookmarked";
 import { PageLoading } from "@/app/_components/loading";
-import CodeAnalysisChart from "./components/activity-chart";
 import { useSnapshotHistory } from "@/app/hook/use-snapshot";
+import CodeAnalysisChart from "./components/code-chart";
+import { PerformanceChart } from "./components/tag-chart";
 
 export default function MyPage() {
   const [activeTab, setActiveTab] = useState("submitted");
