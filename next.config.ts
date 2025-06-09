@@ -1,8 +1,7 @@
 import type { NextConfig } from "next";
-
+const baseurl = process.env.NEXT_PUBLIC_API_URL;
 const nextConfig: NextConfig = {
   async rewrites() {
-    const baseurl = process.env.NEXT_PUBLIC_API_URL;
     return [
       {
         source: "/api/:path*",

@@ -2,6 +2,7 @@
 
 import { fetchSolvedProblems, SolvedProblem } from "@/app/_api/mypage/solved";
 import { useQuery } from "@tanstack/react-query";
+
 export const useSolvedProblems = (userId: number) => {
   return useQuery<SolvedProblem[]>({
     queryKey: ["solved-problems", userId],

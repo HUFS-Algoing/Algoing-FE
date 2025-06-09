@@ -1,3 +1,4 @@
+import scrollbar from "tailwind-scrollbar";
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   darkMode: "class",
@@ -28,5 +29,5 @@ module.exports = {
       },
     },
   },
-  plugins: [],
+  plugins: [scrollbar],
 };

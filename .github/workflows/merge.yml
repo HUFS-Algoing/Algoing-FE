@@ -1,0 +1,17 @@
+name: Notify fork on develop merge
+
+on:
+  push:
+    branches:
+      - develop
+
+jobs:
+  notify-fork:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send dispatch to fork
+        run: |
+          curl -X POST https://github.com/anhyeryeon2/Algoing \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer ${{ secrets.GH_TOKEN }}" \
+            -d '{"event_type":"sync-develop"}'

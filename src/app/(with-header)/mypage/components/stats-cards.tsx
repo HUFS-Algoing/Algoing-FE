@@ -1,7 +1,8 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Send, Code, Bookmark, TrendingUp } from "lucide-react";
+import { Send, Code, Bookmark } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 type StatsCardsProps = {
   solvedCount: number;
@@ -16,10 +17,10 @@ export default function StatsCards({
   bookmarkedCount,
   onClickTab,
 }: StatsCardsProps) {
+  const router = useRouter();
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
       <motion.div
-        initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 0.1 }}
         onClick={() => onClickTab("submitted")}
@@ -36,10 +37,6 @@ export default function StatsCards({
           <div className="text-3xl font-bold text-emerald-900 mb-2">
             {solvedCount}개
           </div>
-          <div className="text-sm text-emerald-600 flex items-center gap-1">
-            <TrendingUp className="h-3 w-3" />
-            +2 이번 주
-          </div>
         </div>
       </motion.div>
 
@@ -47,7 +44,10 @@ export default function StatsCards({
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 0.2 }}
-        onClick={() => onClickTab("reviewed")}
+        onClick={() => {
+          onClickTab("reviewed");
+          router.push("/ai-review");
+        }}
         className="relative bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl p-6 shadow-lg border border-purple-100 overflow-hidden group hover:shadow-xl transition-all duration-300 cursor-pointer hover:-translate-y-1"
       >
         <div className="absolute top-0 right-0 w-20 h-20 bg-purple-200/30 rounded-full -translate-y-10 translate-x-10"></div>
@@ -60,10 +60,6 @@ export default function StatsCards({
           </div>
           <div className="text-3xl font-bold text-purple-900 mb-2">
             {reviewedCount}개
-          </div>
-          <div className="text-sm text-purple-600 flex items-center gap-1">
-            <TrendingUp className="h-3 w-3" />
-            +1 이번 주
           </div>
         </div>
       </motion.div>
@@ -85,10 +81,6 @@ export default function StatsCards({
           </div>
           <div className="text-3xl font-bold text-blue-900 mb-2">
             {bookmarkedCount}개
-          </div>
-          <div className="text-sm text-blue-600 flex items-center gap-1">
-            <TrendingUp className="h-3 w-3" />
-            +1 이번 주
           </div>
         </div>
       </motion.div>

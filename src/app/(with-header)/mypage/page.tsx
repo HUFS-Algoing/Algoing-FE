@@ -2,37 +2,28 @@
 
 import { useState, useRef } from "react";
 import StatsCards from "./components/stats-cards";
-import ActivityChart from "./components/activity-chart";
 import { ProblemTabs } from "./components/problem-tabs";
 import MypageIntroSection from "./components/intro-section";
-import { PerformanceChart } from "./components/performance-chart";
 import { useSolvedProblems } from "@/app/hook/mypage/use-solved";
 import { useReviewedProblems } from "@/app/hook/mypage/use-reviewed";
 import { useBookmarkedProblems } from "@/app/hook/mypage/use-bookmarked";
 import { PageLoading } from "@/app/_components/loading";
-
-const activityData = [
-  { date: "01-09", problems: 1, day: "월" },
-  { date: "01-10", problems: 2, day: "화" },
-  { date: "01-11", problems: 0, day: "수" },
-  { date: "01-12", problems: 3, day: "목" },
-  { date: "01-13", problems: 1, day: "금" },
-  { date: "01-14", problems: 2, day: "토" },
-  { date: "01-15", problems: 1, day: "일" },
-];
+import { useSnapshotHistory } from "@/app/hook/use-snapshot";
+import CodeAnalysisChart from "./components/code-chart";
+import { PerformanceChart } from "./components/tag-chart";
 
 export default function MyPage() {
   const [activeTab, setActiveTab] = useState("submitted");
   const problemsSectionRef = useRef<HTMLDivElement>(null);
-
   const userId = 3;
+  const { data: snapshotresult } = useSnapshotHistory(userId);
 
   const { data: solvedProblems = [], isLoading: isSolvedLoading } =
-    useSolvedProblems(userId ?? 0);
+    useSolvedProblems(userId);
   const { data: reviewedProblems = [], isLoading: isReviewedLoading } =
-    useReviewedProblems(userId ?? 0);
+    useReviewedProblems(userId);
   const { data: bookmarkedProblems = [], isLoading: isBookmarkedLoading } =
-    useBookmarkedProblems(userId ?? 0);
+    useBookmarkedProblems(userId);
 
   if (!userId || isSolvedLoading || isReviewedLoading || isBookmarkedLoading) {
     return <PageLoading />;
@@ -49,7 +40,7 @@ export default function MyPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 pt-20">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 pt-6">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <MypageIntroSection />
         <StatsCards
@@ -59,8 +50,9 @@ export default function MyPage() {
           onClickTab={scrollToProblems}
         />
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-          <ActivityChart activityData={activityData} />
-          <PerformanceChart />
+          <CodeAnalysisChart data={snapshotresult} />
+
+          <PerformanceChart userId={userId} />
         </div>
         <div ref={problemsSectionRef}>
           <ProblemTabs
