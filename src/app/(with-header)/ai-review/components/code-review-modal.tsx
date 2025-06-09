@@ -1,7 +1,7 @@
 "use client";
 
 import { Modal } from "@/app/(with-header)/ai-review/components/modal";
-import { Badge } from "@/app/(with-header)/code/components/code/Badge";
+import { Badge } from "@/app/_components/Badge";
 import {
   Card,
   CardContent,
