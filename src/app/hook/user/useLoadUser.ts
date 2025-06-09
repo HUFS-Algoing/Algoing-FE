@@ -1,3 +1,4 @@
+// /hook/user/useLoadUser.ts
 import { useQuery } from "@tanstack/react-query";
 import { getMyInfo, MyInfoResponse } from "@/app/_api/user/getMyInfo";
 

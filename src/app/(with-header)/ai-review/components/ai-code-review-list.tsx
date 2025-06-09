@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ChevronLeft,
@@ -9,36 +8,70 @@ import {
   ChevronsLeft,
   ChevronsRight,
   Filter,
-  Clock,
   Award,
-  FileCode,
-  CheckCircle,
-  XCircle,
   Calendar,
-  Code,
   Hash,
   Tag,
 } from "lucide-react";
-import { mockReviews } from "@/app/_mock/ai-review";
+import { useReviewedProblems } from "@/app/hook/review/use-review-list";
+import { useQueries } from "@tanstack/react-query";
+import {
+  getProblemDetail,
+  type ProblemDetailResponse,
+} from "@/app/_api/problem/problemInfo";
+import { CodeReviewModal } from "@/app/(with-header)/ai-review/components/code-review-modal";
 
 export default function AICodeReviewList() {
   const [selectedFilter, setSelectedFilter] = useState<string>("all");
   const [currentPage, setCurrentPage] = useState(1);
   const [viewMode, setViewMode] = useState<"list" | "grid">("list");
+  const [selectedReview, setSelectedReview] = useState<any>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const { data } = useReviewedProblems(3);
 
   const filterOptions = [
     { id: "all", label: "전체", icon: <Filter className="h-4 w-4" /> },
-    {
-      id: "completed",
-      label: "완료됨",
-      icon: <CheckCircle className="h-4 w-4" />,
-    },
-    { id: "in-progress", label: "진행중", icon: <Clock className="h-4 w-4" /> },
-    { id: "failed", label: "실패", icon: <XCircle className="h-4 w-4" /> },
     { id: "gold", label: "골드 이상", icon: <Award className="h-4 w-4" /> },
   ];
 
-  const filteredReviews = mockReviews.filter((review) => {
+  const reviews = data || [];
+
+  const problemQueries = useQueries<
+    {
+      data: ProblemDetailResponse;
+    }[]
+  >({
+    queries: reviews.map((review) => ({
+      queryKey: ["problem", review.problemNum],
+      queryFn: () => getProblemDetail(review.problemNum),
+      enabled: !!review.problemNum,
+    })),
+  });
+
+  const mergedReviews = reviews.map((review, index) => {
+    const problem = problemQueries[index]?.data;
+    return {
+      ...review,
+      title: problem?.title || "제목 불러오는 중...",
+      isHighlighted: false,
+      problemNumber: problem?.problemId,
+      baekjoonTier: problem?.level
+        ? ["", "브론즈", "실버", "골드", "플래티넘", "다이아", "루비"][
+            Math.floor(problem.level / 5)
+          ] +
+          " " +
+          (problem.level % 5 || 5)
+        : "알 수 없음",
+      algorithmType: problem?.tagNames?.split(",")[0] || "알 수 없음",
+      tags: problem?.tagNames?.split(",") || [],
+      difficulty: problem?.level ? `Lv.${problem.level}` : "-",
+      date: new Date(review.createdAt).toLocaleDateString(),
+      status: "completed",
+    };
+  });
+
+  const filteredReviews = mergedReviews.filter((review) => {
     if (selectedFilter === "all") return true;
     if (selectedFilter === "completed") return review.status === "completed";
     if (selectedFilter === "in-progress")
@@ -59,30 +92,14 @@ export default function AICodeReviewList() {
 
   const totalPages = Math.ceil(sortedReviews.length / 10);
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "completed":
-        return "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400";
-      case "in-progress":
-        return "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400";
-      case "failed":
-        return "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400";
-      default:
-        return "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-400";
-    }
+  const handleReviewClick = (review: any) => {
+    setSelectedReview(review);
+    setIsModalOpen(true);
   };
 
-  const getStatusIcon = (status: string) => {
-    switch (status) {
-      case "completed":
-        return <CheckCircle className="h-4 w-4 mr-1" />;
-      case "in-progress":
-        return <Clock className="h-4 w-4 mr-1" />;
-      case "failed":
-        return <XCircle className="h-4 w-4 mr-1" />;
-      default:
-        return null;
-    }
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedReview(null);
   };
 
   const getTierColor = (tier: string) => {
@@ -120,15 +137,6 @@ export default function AICodeReviewList() {
                 AI가 당신의 코드를 분석하고 개선점을 제안합니다. 코드 품질,
                 성능, 보안 측면에서 전문적인 피드백을 받아보세요.
               </p>
-            </div>
-            <div className="mt-4 sm:mt-0">
-              <motion.button
-                whileHover={{ scale: 1.03 }}
-                whileTap={{ scale: 0.97 }}
-                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-              >
-                <FileCode className="mr-2 h-4 w-4" />새 코드 분석 요청
-              </motion.button>
             </div>
           </div>
         </div>
@@ -224,7 +232,6 @@ export default function AICodeReviewList() {
                 <div className="col-span-1 text-center">문제 번호</div>
                 <div className="col-span-2 text-center">백준 티어</div>
                 <div className="col-span-2 text-center">알고리즘 유형</div>
-                <div className="col-span-1 text-center">상태</div>
               </div>
 
               <div className="divide-y divide-gray-100">
@@ -236,9 +243,10 @@ export default function AICodeReviewList() {
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -10 }}
                       transition={{ duration: 0.2, delay: index * 0.05 }}
-                      className={`grid grid-cols-12 gap-4 px-6 py-4 items-center ${
+                      className={`grid grid-cols-12 gap-4 px-6 py-4 items-center cursor-pointer ${
                         review.isHighlighted ? "bg-indigo-50/30" : ""
                       } hover:bg-gray-50 transition-colors duration-150`}
+                      onClick={() => handleReviewClick(review)}
                     >
                       <div className="col-span-6">
                         <div className="flex items-center flex-wrap gap-1.5">
@@ -247,12 +255,9 @@ export default function AICodeReviewList() {
                               {review.difficulty}
                             </span>
                           )}
-                          <Link
-                            href={`/ai-review/${review.id}`}
-                            className="text-gray-900 hover:text-indigo-600 font-medium line-clamp-1 ml-1"
-                          >
+                          <span className="text-gray-900 hover:text-indigo-600 font-medium line-clamp-1 ml-1">
                             {review.title}
-                          </Link>
+                          </span>
                         </div>
 
                         {review.tags && review.tags.length > 0 && (
@@ -265,21 +270,6 @@ export default function AICodeReviewList() {
                                 #{tag}
                               </span>
                             ))}
-                          </div>
-                        )}
-
-                        {review.timeComplexity && (
-                          <div className="mt-1 ml-1 flex items-center gap-2">
-                            <span className="text-xs text-gray-500 flex items-center">
-                              <Code className="h-3 w-3 mr-1" />
-                              시간: {review.timeComplexity}
-                            </span>
-                            {review.spaceComplexity && (
-                              <span className="text-xs text-gray-500 flex items-center">
-                                <Code className="h-3 w-3 mr-1" />
-                                공간: {review.spaceComplexity}
-                              </span>
-                            )}
                           </div>
                         )}
                       </div>
@@ -300,21 +290,6 @@ export default function AICodeReviewList() {
                         <span className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-blue-50 text-blue-700">
                           <Tag className="h-3 w-3 mr-1" />
                           {review.algorithmType}
-                        </span>
-                      </div>
-
-                      <div className="col-span-1 text-center">
-                        <span
-                          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(
-                            review.status
-                          )}`}
-                        >
-                          {getStatusIcon(review.status)}
-                          {review.status === "completed"
-                            ? "완료"
-                            : review.status === "in-progress"
-                              ? "진행중"
-                              : "실패"}
                         </span>
                       </div>
                     </motion.div>
@@ -343,11 +318,12 @@ export default function AICodeReviewList() {
                       y: -5,
                       boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1)",
                     }}
-                    className={`bg-white rounded-xl border ${
+                    className={`bg-white rounded-xl border cursor-pointer ${
                       review.isHighlighted
                         ? "border-indigo-300"
                         : "border-gray-200"
                     } overflow-hidden shadow-sm hover:shadow-md transition-all duration-200`}
+                    onClick={() => handleReviewClick(review)}
                   >
                     <div className="p-5">
                       <div className="flex justify-between items-start mb-3">
@@ -391,50 +367,8 @@ export default function AICodeReviewList() {
                         </div>
                       )}
 
-                      {(review.timeComplexity || review.spaceComplexity) && (
-                        <div className="bg-gray-50 rounded-lg p-3 mb-4">
-                          <div className="text-xs font-medium text-gray-700 mb-2">
-                            복잡도 분석
-                          </div>
-                          <div className="grid grid-cols-2 gap-2">
-                            {review.timeComplexity && (
-                              <div className="bg-white rounded-md p-2">
-                                <div className="text-xs text-gray-500">
-                                  시간 복잡도
-                                </div>
-                                <div className="font-mono text-sm text-indigo-600">
-                                  {review.timeComplexity}
-                                </div>
-                              </div>
-                            )}
-                            {review.spaceComplexity && (
-                              <div className="bg-white rounded-md p-2">
-                                <div className="text-xs text-gray-500">
-                                  공간 복잡도
-                                </div>
-                                <div className="font-mono text-sm text-indigo-600">
-                                  {review.spaceComplexity}
-                                </div>
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      )}
-
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
-                          <span
-                            className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(
-                              review.status
-                            )}`}
-                          >
-                            {getStatusIcon(review.status)}
-                            {review.status === "completed"
-                              ? "완료"
-                              : review.status === "in-progress"
-                                ? "진행중"
-                                : "실패"}
-                          </span>
                           <span className="text-xs text-gray-500">
                             {review.date}
                           </span>
@@ -499,6 +433,13 @@ export default function AICodeReviewList() {
           </nav>
         </div>
       </main>
+
+      {/* Code Review Modal */}
+      <CodeReviewModal
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        review={selectedReview}
+      />
     </div>
   );
 }
