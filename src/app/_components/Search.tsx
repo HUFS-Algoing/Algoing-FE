@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDebounce } from "use-debounce";
 import { useSearchProblems } from "@/app/hook/problem/use-search-problems";
 import { Search, Code, Loader2, AlertCircle } from "lucide-react";
@@ -20,9 +20,26 @@ export default function Searchbar() {
   const searchResults = data?.result || data;
   const hasResults = Array.isArray(searchResults) && searchResults.length > 0;
   const shouldShowDropdown = isSearchFocused && keyword.trim().length > 0;
+  const wrapperRef = useRef<HTMLDivElement>(null);
 
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        wrapperRef.current &&
+        !wrapperRef.current.contains(event.target as Node)
+      ) {
+        setIsSearchFocused(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
   return (
     <div
+      ref={wrapperRef}
       className={`relative transition-all duration-300 ${isSearchFocused ? "w-64 lg:w-72" : "w-48 lg:w-60"}`}
     >
       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -34,15 +51,18 @@ export default function Searchbar() {
         onChange={(e) => setKeyword(e.target.value)}
         onFocus={() => setIsSearchFocused(true)}
         onBlur={(e) => {
-          setTimeout(() => {
+          requestAnimationFrame(() => {
+            const active = document.activeElement;
             if (
-              !e.currentTarget.parentElement?.contains(document.activeElement)
+              e.currentTarget &&
+              e.currentTarget.parentElement &&
+              !e.currentTarget.parentElement.contains(active)
             ) {
               setIsSearchFocused(false);
             }
-          }, 300);
+          });
         }}
-        placeholder="문제 번호, 제목, 키워드 ↵"
+        placeholder="문제 번호, 제목, 키워드 ⏎ "
         className={`text-sm pl-10 pr-4 py-2 rounded-full border w-full transition-all duration-300 focus:outline-none text-gray-700 dark:text-gray-100 ${
           isSearchFocused
             ? "border-indigo-300 dark:border-indigo-700 bg-white dark:bg-neutral-800 shadow-sm ring-2 ring-indigo-100 dark:ring-indigo-900/30"
