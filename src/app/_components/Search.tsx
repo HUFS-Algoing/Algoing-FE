@@ -40,7 +40,7 @@ export default function Searchbar() {
   return (
     <div
       ref={wrapperRef}
-      className={`relative transition-all duration-300 ${isSearchFocused ? "w-64 lg:w-72" : "w-48 lg:w-60"}`}
+      className={`relative transition-all duration-300 ${isSearchFocused ? "w-96 lg:w-96" : "w-80 lg:w-120"}`}
     >
       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
         <Search size={16} className="text-gray-500 dark:text-gray-400" />

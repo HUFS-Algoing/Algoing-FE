@@ -1,9 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, CalendarCheck } from "lucide-react";
 import { cn } from "@/app/lib/utils";
 import { useZandi } from "@/app/hook/use-zandi";
+import { formatDate } from "@/app/_util/date";
+import { getGitHubColorClass } from "@/app/_util/color-class";
 
 export default function ContributionCalendar({
   userId,
@@ -19,7 +21,7 @@ export default function ContributionCalendar({
 
   const { data: contributions = [], isLoading } = useZandi(userId);
 
-  const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+  const daysOfWeek = ["일", "월", "화", "수", "목", "금", "토"];
   const firstDay = new Date(currentYear, currentMonth - 1, 1).getDay();
   const daysInMonth = new Date(currentYear, currentMonth, 0).getDate();
 
@@ -29,8 +31,7 @@ export default function ContributionCalendar({
       const day = index - firstDay + 1;
       if (day > 0 && day <= daysInMonth) {
         const dateObj = new Date(currentYear, currentMonth - 1, day);
-        const dateStr = dateObj.toLocaleDateString("sv-SE");
-
+        const dateStr = formatDate(dateObj);
         const contribution = contributions.find((c) => c.date === dateStr);
         return {
           day,
@@ -45,6 +46,10 @@ export default function ContributionCalendar({
   for (let i = 0; i < 6; i++) {
     weeks.push(calendarDays.slice(i * 7, (i + 1) * 7));
   }
+
+  const totalSolved = contributions.reduce((sum, c) => sum + c.count, 0);
+  const activeDays = contributions.filter((c) => c.count > 0).length;
+  const maxStreak = calculateMaxStreak(contributions);
 
   const handlePrevMonth = () => {
     if (currentMonth === 1) {
@@ -65,62 +70,88 @@ export default function ContributionCalendar({
   };
 
   return (
-    <div className="text-sm">
-      <div className="flex items-center justify-between mb-6">
-        <button
-          onClick={handlePrevMonth}
-          className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
-        >
-          <ChevronLeft className="h-4 w-4 text-gray-600" />
-        </button>
-        <h2 className="text-lg font-bold text-gray-900">
-          {currentYear}.{currentMonth}
-        </h2>
-        <button
-          onClick={handleNextMonth}
-          className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
-        >
-          <ChevronRight className="h-4 w-4 text-gray-600" />
-        </button>
+    <div className="bg-white /50 rounded-xl p-6 border border-gray-200/70 shadow-sm">
+      <div className="flex items-center justify-evenly  mb-6">
+        <div className="grid grid-cols-3 items-center mb-6">
+          <button
+            onClick={handlePrevMonth}
+            className="justify-self-start p-2 rounded-lg hover:bg-gray-100 transition-colors"
+          >
+            <ChevronLeft className="h-4 w-4 text-gray-600 " />
+          </button>
+          <h2 className="text-center text-base font-semibold text-gray-900 ">
+            {currentYear}년 {currentMonth}월
+          </h2>
+          <button
+            onClick={handleNextMonth}
+            className="justify-self-end p-2 rounded-lg hover:bg-gray-100 transition-colors"
+          >
+            <ChevronRight className="h-4 w-4 text-gray-600 " />
+          </button>
+        </div>
+      </div>
+
+      <div className="flex justify-between text-xs text-gray-600  mb-4">
+        <div className="flex items-center gap-1">
+          <CalendarCheck className="w-4 h-4" />
+          <span>총 {totalSolved}일</span>
+        </div>
+        <div>
+          활동일수 {activeDays}일 · 최대 연속 {maxStreak}일
+        </div>
       </div>
 
       {isLoading ? (
-        <div className="text-center text-gray-500">로딩 중...</div>
+        <div className="text-center text-gray-500 py-8">
+          <div className="animate-spin w-6 h-6 border-2 border-green-500 border-t-transparent rounded-full mx-auto mb-2" />
+          로딩 중...
+        </div>
       ) : (
         <>
-          <div className="grid grid-cols-7 gap-2 mb-4">
+          <div className="grid grid-cols-7 gap-1 mb-2">
             {daysOfWeek.map((day) => (
               <div
                 key={day}
-                className="text-center text-xs font-medium text-gray-500 py-2"
+                className="text-center text-xs font-medium text-gray-500  py-2"
               >
                 {day}
               </div>
             ))}
           </div>
 
-          <div className="space-y-1">
+          <div className="space-y-1 relative">
             {weeks.map((week, weekIndex) => (
               <div key={weekIndex} className="grid grid-cols-7 gap-1">
                 {week.map((day, dayIndex) => (
                   <div
                     key={dayIndex}
                     className={cn(
-                      "aspect-square rounded-lg transition-all duration-200 flex items-center justify-center text-xs font-medium",
-                      day ? getColorClass(day.count) : "opacity-0"
+                      "aspect-square rounded-md transition-all duration-200 flex items-center justify-center text-xs font-medium cursor-pointer relative group",
+                      day ? getGitHubColorClass(day.count) : "opacity-0"
                     )}
                   >
                     {day?.day}
+                    {day && (
+                      <div className="absolute inset-0 rounded-md border-2 border-transparent  transition-colors"></div>
+                    )}
                   </div>
                 ))}
               </div>
             ))}
           </div>
 
-          <div className="flex items-center justify-center gap-6 mt-8">
-            <LegendItem color="bg-green-100" label="1 solved" />
-            <LegendItem color="bg-green-200" label="2~3 solved" />
-            <LegendItem color="bg-green-400" label="4+ solved" />
+          <div className="flex items-center justify-between mt-6 pt-4 border-t border-gray-200/50">
+            <div className="flex items-center gap-2 text-xs text-gray-600 ">
+              <span>적음</span>
+              <div className="flex items-center gap-1">
+                <div className="w-3 h-3 rounded-sm bg-gray-100  border border-gray-200 " />
+                <div className="w-3 h-3 rounded-sm bg-green-100  border border-green-200 " />
+                <div className="w-3 h-3 rounded-sm bg-green-300  border border-green-400 " />
+                <div className="w-3 h-3 rounded-sm bg-green-500  border border-green-600 " />
+                <div className="w-3 h-3 rounded-sm bg-green-900  border border-green-900 " />
+              </div>
+              <span>많음</span>
+            </div>
           </div>
         </>
       )}
@@ -128,18 +159,25 @@ export default function ContributionCalendar({
   );
 }
 
-function getColorClass(count: number) {
-  if (count === 0) return "bg-gray-100 text-gray-400 border border-gray-200";
-  if (count === 1) return "bg-green-100 text-green-700 border border-green-200";
-  if (count <= 3) return "bg-green-200 text-green-800 border border-green-300";
-  return "bg-green-400 text-white border border-green-500";
-}
+// 최대 연속 활동일 계산
+function calculateMaxStreak(
+  contributions: Array<{ date: string; count: number }>
+) {
+  let maxStreak = 0;
+  let currentStreak = 0;
 
-function LegendItem({ color, label }: { color: string; label: string }) {
-  return (
-    <div className="flex items-center gap-2">
-      <div className={`w-3 h-3 rounded-sm ${color}`} />
-      <span className="text-xs text-gray-600">{label}</span>
-    </div>
-  );
+  const sorted = contributions
+    .slice()
+    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+
+  for (const c of sorted) {
+    if (c.count > 0) {
+      currentStreak++;
+      maxStreak = Math.max(maxStreak, currentStreak);
+    } else {
+      currentStreak = 0;
+    }
+  }
+
+  return maxStreak;
 }

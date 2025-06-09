@@ -1,4 +1,3 @@
-// components/HeroSection.tsx
 "use client";
 
 import { Trophy, Zap } from "lucide-react";
@@ -36,9 +35,6 @@ export default function MypageIntroSection() {
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
                   </div>
-                </div>
-                <div className="absolute -bottom-1 -right-1 w-7 h-7 bg-emerald-400 rounded-full border-4 border-violet-700 flex items-center justify-center">
-                  <div className="absolute inset-0 bg-emerald-400 rounded-full animate-ping opacity-70"></div>
                 </div>
               </motion.div>
 

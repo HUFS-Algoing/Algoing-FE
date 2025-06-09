@@ -4,15 +4,14 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
-import DarkModeToggle from "./DarkMode";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import Searchbar from "./Search";
 
 const menuItems = [
   { name: "추천 문제", path: "/recommend" },
-  { name: "리뷰 커뮤니티", path: "/community" },
   { name: "AI 리뷰", path: "/ai-review" },
+  { name: "내 활동", path: "/mypage" },
 ];
 
 export default function Header() {
@@ -23,7 +22,6 @@ export default function Header() {
     <header
       className={`fixed top-0 z-50 w-full flex justify-between items-center px-4 sm:px-8 lg:px-24 py-3 transition-all duration-300 bg-white dark:bg-neutral-900`}
     >
-      {/* 좌측 Logo & Nav */}
       <div className="flex items-center gap-6 lg:gap-12">
         <Link href="/" className="hover:opacity-80 transition relative group">
           <motion.div
@@ -71,7 +69,6 @@ export default function Header() {
         </nav>
       </div>
 
-      {/* 모바일 메뉴 버튼 */}
       <button
         className="md:hidden w-10 h-10 flex items-center justify-center text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-neutral-800 rounded-full"
         onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -80,7 +77,6 @@ export default function Header() {
         {isMobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
       </button>
 
-      {/* 모바일 메뉴 드롭다운 */}
       <AnimatePresence>
         {isMobileMenuOpen && (
           <motion.div
@@ -105,20 +101,11 @@ export default function Header() {
                   {item.name}
                 </Link>
               ))}
-              <div className="pt-2 border-t border-gray-200 dark:border-neutral-800">
-                <div className="flex items-center gap-3 py-2">
-                  <DarkModeToggle />
-                  <span className="text-sm text-gray-600 dark:text-gray-400">
-                    다크 모드
-                  </span>
-                </div>
-              </div>
             </nav>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* 우측 검색/프로필 */}
       <div className="hidden md:flex items-center gap-3 lg:gap-4">
         <Searchbar />
 
@@ -134,9 +121,9 @@ export default function Header() {
             <Image
               src="/profile5.png"
               alt="프로필"
-              width={36}
-              height={36}
-              className="w-9 h-9 rounded-full border-2 border-white dark:border-neutral-800 shadow-sm object-cover"
+              width={50}
+              height={50}
+              className="w-12 h-12 rounded-full border-2 border-white dark:border-neutral-800 shadow-sm object-cover"
             />
             <span className="absolute inset-0 rounded-full ring-2 ring-indigo-500/50 opacity-0 group-hover:opacity-100 transition-opacity"></span>
           </motion.div>
