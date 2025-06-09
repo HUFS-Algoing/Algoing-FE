@@ -7,7 +7,7 @@ import { Menu, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import Searchbar from "./Search";
-
+import Logo from "../icon/main-logo.svg";
 const menuItems = [
   { name: "추천 문제", path: "/recommend" },
   { name: "AI 리뷰", path: "/ai-review" },
@@ -23,15 +23,9 @@ export default function Header() {
       className={`fixed top-0 z-50 w-full flex justify-between items-center px-4 sm:px-8 lg:px-24 py-3 transition-all duration-300 bg-white dark:bg-neutral-900`}
     >
       <div className="flex items-center gap-6 lg:gap-12">
-        <Link href="/" className="hover:opacity-80 transition relative group">
+        <Link href="/" className=" transition relative group">
           <div>
-            <Image
-              src={"/img/RealLogo.png"}
-              alt="ALGOING Logo"
-              width={120}
-              height={50}
-              className="h-8 sm:h-9 w-auto"
-            />
+            <Logo className="w-[160px] h-[50px]" />
             <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-indigo-500 to-purple-500 transition-all duration-300 group-hover:w-full"></span>
           </div>
         </Link>
