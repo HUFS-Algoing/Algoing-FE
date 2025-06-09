@@ -2,11 +2,12 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
-import { Search, Menu, X } from "lucide-react";
+import { useState } from "react";
+import { Menu, X } from "lucide-react";
 import DarkModeToggle from "./DarkMode";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
+import Searchbar from "./Search";
 
 const menuItems = [
   { name: "추천 문제", path: "/recommend" },
@@ -16,45 +17,13 @@ const menuItems = [
 
 export default function Header() {
   const pathname = usePathname();
-  const [isDarkMode, setIsDarkMode] = useState(false);
-  const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isScrolled, setIsScrolled] = useState(false);
-  useEffect(() => {
-    const savedTheme = localStorage.getItem("theme");
-    if (savedTheme === "dark") {
-      setIsDarkMode(true);
-    }
-
-    const observer = new MutationObserver(() => {
-      setIsDarkMode(document.documentElement.classList.contains("dark"));
-    });
-
-    observer.observe(document.documentElement, {
-      attributes: true,
-      attributeFilter: ["class"],
-    });
-
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 10);
-    };
-
-    window.addEventListener("scroll", handleScroll);
-
-    return () => {
-      observer.disconnect();
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, []);
 
   return (
     <header
-      className={`fixed top-0 z-50 w-full flex justify-between items-center px-4 sm:px-8 lg:px-24 py-3 transition-all duration-300 ${
-        isScrolled
-          ? "bg-white/90 dark:bg-neutral-900/90 backdrop-blur-md shadow-sm"
-          : "bg-white dark:bg-neutral-900"
-      }`}
+      className={`fixed top-0 z-50 w-full flex justify-between items-center px-4 sm:px-8 lg:px-24 py-3 transition-all duration-300 bg-white dark:bg-neutral-900`}
     >
+      {/* 좌측 Logo & Nav */}
       <div className="flex items-center gap-6 lg:gap-12">
         <Link href="/" className="hover:opacity-80 transition relative group">
           <motion.div
@@ -63,7 +32,7 @@ export default function Header() {
             transition={{ type: "spring", stiffness: 400, damping: 10 }}
           >
             <Image
-              src={isDarkMode ? "/DarkModeLogo.png" : "/LightModeLogo.png"}
+              src={"/DarkModeLogo.png"}
               alt="ALGOING Logo"
               width={100}
               height={36}
@@ -73,7 +42,6 @@ export default function Header() {
           </motion.div>
         </Link>
 
-        {/* Desktop Navigation */}
         <nav className="hidden md:flex gap-1 lg:gap-2">
           {menuItems.map((item) => (
             <Link
@@ -103,16 +71,16 @@ export default function Header() {
         </nav>
       </div>
 
-      {/* Mobile Menu Button */}
+      {/* 모바일 메뉴 버튼 */}
       <button
-        className="md:hidden flex items-center justify-center w-10 h-10 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-neutral-800 rounded-full transition-colors"
+        className="md:hidden w-10 h-10 flex items-center justify-center text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-neutral-800 rounded-full"
         onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
         aria-label="Toggle mobile menu"
       >
         {isMobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
       </button>
 
-      {/* Mobile Menu */}
+      {/* 모바일 메뉴 드롭다운 */}
       <AnimatePresence>
         {isMobileMenuOpen && (
           <motion.div
@@ -150,38 +118,10 @@ export default function Header() {
         )}
       </AnimatePresence>
 
-      {/* Desktop Right Section */}
+      {/* 우측 검색/프로필 */}
       <div className="hidden md:flex items-center gap-3 lg:gap-4">
-        {/* Search */}
-        <div
-          className={`relative transition-all duration-300 ${isSearchFocused ? "w-64 lg:w-72" : "w-48 lg:w-60"}`}
-        >
-          <div
-            className={`absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none transition-opacity ${
-              isSearchFocused ? "opacity-100" : "opacity-70"
-            }`}
-          >
-            <Search size={16} className="text-gray-500 dark:text-gray-400" />
-          </div>
-          <input
-            type="text"
-            placeholder="문제 번호, 제목, 키워드"
-            className={`text-sm pl-10 pr-4 py-2 rounded-full border transition-all duration-300 w-full ${
-              isSearchFocused
-                ? "border-indigo-300 dark:border-indigo-700 bg-white dark:bg-neutral-800 shadow-sm ring-2 ring-indigo-100 dark:ring-indigo-900/30"
-                : "border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-neutral-800/70"
-            } text-gray-700 dark:text-gray-100 focus:outline-none`}
-            onFocus={() => setIsSearchFocused(true)}
-            onBlur={() => setIsSearchFocused(false)}
-          />
-        </div>
+        <Searchbar />
 
-        {/* Dark Mode Toggle */}
-        <div className="flex items-center">
-          <DarkModeToggle />
-        </div>
-
-        {/* Profile */}
         <Link
           href="/mypage"
           className="relative group flex items-center justify-center hover:opacity-95 transition"

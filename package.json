@@ -25,6 +25,7 @@
     "react-query": "^3.39.3",
     "tailwind-merge": "^3.3.0",
     "tanstack-query": "^1.0.0",
+    "use-debounce": "^10.0.5",
     "zustand": "^5.0.5"
   },
   "devDependencies": {
