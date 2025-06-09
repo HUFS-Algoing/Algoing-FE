@@ -49,25 +49,62 @@ export default function CodeAnalysisChart({
     );
   }
 
-  const chartData = data.map((item) => ({
-    date: new Date(item.createdAt).toLocaleDateString("ko-KR", {
-      month: "numeric",
-      day: "numeric",
-    }),
-    가독성: item.normalizedReadbility,
-    최적화: item.normalizedOptimization,
-    중복도: item.normalizedDuplicate,
-  }));
+  // 날짜별 그룹화 및 평균 처리
+  const grouped: Record<string, CodeStatData[]> = {};
+  for (const item of data) {
+    const dateKey = new Date(item.createdAt).toISOString().split("T")[0];
+    if (!grouped[dateKey]) grouped[dateKey] = [];
+    grouped[dateKey].push(item);
+  }
 
+  const averagedData = Object.entries(grouped).map(([dateKey, items]) => {
+    const total = items.reduce(
+      (acc, cur) => {
+        acc.readability += cur.normalizedReadbility;
+        acc.optimization += cur.normalizedOptimization;
+        acc.duplicate += cur.normalizedDuplicate;
+        return acc;
+      },
+      { readability: 0, optimization: 0, duplicate: 0 }
+    );
+    const count = items.length;
+    return {
+      date: new Date(dateKey).toLocaleDateString("ko-KR", {
+        month: "numeric",
+        day: "numeric",
+      }),
+      가독성: parseFloat((total.readability / count).toFixed(2)),
+      최적화: parseFloat((total.optimization / count).toFixed(2)),
+      중복도: parseFloat((total.duplicate / count).toFixed(2)),
+    };
+  });
+
+  // 최신 날짜 기준 정렬 및 8개 제한
+  const chartData = averagedData
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+    .slice(0, 8)
+    .reverse();
+
+  // 평균 계산
   const calculateAverageStats = (key: keyof (typeof chartData)[0]) => {
     const values = chartData.map((item) => item[key] as number);
     const average = values.reduce((acc, cur) => acc + cur, 0) / values.length;
-    return { average };
+    return { average: parseFloat(average.toFixed(2)) };
   };
 
   const readabilityStats = calculateAverageStats("가독성");
   const optimizationStats = calculateAverageStats("최적화");
   const duplicateStats = calculateAverageStats("중복도");
+
+  // 전날 대비 변화량 계산
+  const getDelta = (key: keyof (typeof chartData)[0]) => {
+    if (chartData.length < 2) return "0.00";
+    const last = chartData[chartData.length - 1][key] as number;
+    const prev = chartData[chartData.length - 2][key] as number;
+    const delta = last - prev;
+    const sign = delta > 0 ? "+" : delta < 0 ? "" : "";
+    return `${sign}${delta.toFixed(2)}`;
+  };
 
   return (
     <div className="bg-white rounded-lg shadow-md border border-slate-200 overflow-hidden">
@@ -79,7 +116,7 @@ export default function CodeAnalysisChart({
           </h2>
         </div>
         <p className="text-sm text-slate-500 mt-1">
-          시간에 따른 코드 품질 변화 (전체 평균 기준)
+          최근 분석 결과의 일별 평균 추이
         </p>
       </div>
 
@@ -123,26 +160,43 @@ export default function CodeAnalysisChart({
           </LineChart>
         </ResponsiveContainer>
 
+        {/* 변화량 및 평균 표시 */}
         <div className="grid grid-cols-3 gap-2">
           <div className="flex flex-col items-center p-2 rounded-lg bg-slate-50">
             <div className="text-xs text-slate-500 mb-1">가독성 (평균)</div>
             <div className="font-semibold text-indigo-600">
-              {readabilityStats.average.toFixed(1)}
+              {readabilityStats.average}{" "}
+              <span className="text-xs text-slate-400">
+                ({getDelta("가독성")})
+              </span>
             </div>
           </div>
           <div className="flex flex-col items-center p-2 rounded-lg bg-slate-50">
             <div className="text-xs text-slate-500 mb-1">최적화 (평균)</div>
             <div className="font-semibold text-emerald-600">
-              {optimizationStats.average.toFixed(1)}
+              {optimizationStats.average}{" "}
+              <span className="text-xs text-slate-400">
+                ({getDelta("최적화")})
+              </span>
             </div>
           </div>
           <div className="flex flex-col items-center p-2 rounded-lg bg-slate-50">
             <div className="text-xs text-slate-500 mb-1">중복도 (평균)</div>
             <div className="font-semibold text-amber-600">
-              {duplicateStats.average.toFixed(1)}
+              {duplicateStats.average}{" "}
+              <span className="text-xs text-slate-400">
+                ({getDelta("중복도")})
+              </span>
             </div>
           </div>
         </div>
+
+        {/* 품질 경고 메시지 */}
+        {duplicateStats.average > 60 && (
+          <p className="text-sm text-red-500 text-center mt-2">
+            ⚠️ 중복도가 높습니다. 코드 리팩토링을 고려해보세요.
+          </p>
+        )}
       </div>
     </div>
   );
