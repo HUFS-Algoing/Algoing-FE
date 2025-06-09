@@ -47,12 +47,12 @@ export function PerformanceChart({ userId }: Props) {
     >
       {/* 헤더 */}
       <div className="flex items-center justify-between mb-1">
-        <h3 className=" flex items-center gap-2">
+        <div className="flex items-center gap-2">
           <Trophy className="h-5 w-5 text-yellow-500" />
-          <h2 className="text-lg font-semibold text-slate-900">
+          <span className="text-lg font-semibold text-slate-900">
             많이 푼 태그 TOP 5
-          </h2>
-        </h3>
+          </span>
+        </div>
         <PieChart className="h-5 w-5 text-slate-400" />
       </div>
 
