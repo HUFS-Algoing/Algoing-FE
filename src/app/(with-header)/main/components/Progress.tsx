@@ -15,7 +15,7 @@ export default function ProgressFromSolved({
   totalProblems = 100,
   className = "",
 }: ProgressFromSolvedProps) {
-  const { data, isLoading } = useSolvedProblems(userId);
+  const { data } = useSolvedProblems(userId);
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
@@ -27,9 +27,6 @@ export default function ProgressFromSolved({
 
   return (
     <>
-      <p className="text-xs text-gray-600 dark:text-gray-400 mt-1 mb-2">
-        {isLoading ? "로딩 중..." : `${data?.length ?? 0} 문제 해결`}
-      </p>
       <div
         className={`relative w-full h-[8px] rounded-full overflow-hidden bg-gray-100 dark:bg-neutral-700 shadow-inner ${className}`}
       >

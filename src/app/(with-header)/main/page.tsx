@@ -4,16 +4,18 @@ import Link from "next/link";
 import ContributionCalendar from "./components/Calendar";
 import Progress from "./components/Progress";
 import RecommendedProblems from "./components/Recommend";
-import { FaCode, FaStar, FaCalendarAlt, FaChartLine } from "react-icons/fa";
+import { FaCode, FaChartLine } from "react-icons/fa";
 import Image from "next/image";
 import { useMyInfo } from "@/app/hook/user/useLoadUser";
 import { useEffect } from "react";
 import { useUserStore } from "@/app/_store/use-userStore";
 import { useLatestReviewedProblem } from "@/app/hook/problem/use-latest-reivewed-1";
+import { useSolvedProblems } from "@/app/hook/mypage/use-solved";
 
 export default function UserDashboard() {
   const { data: myInfo } = useMyInfo();
   const setUser = useUserStore((state) => state.setUser);
+  const { data } = useSolvedProblems(3);
 
   useEffect(() => {
     console.log("✅ useEffect 진입");
@@ -72,18 +74,8 @@ export default function UserDashboard() {
             <div className="flex items-center justify-center md:justify-start gap-6 mb-4 text-sm">
               <div className="flex items-center gap-1 text-gray-600 dark:text-gray-300">
                 <FaCode className="w-4 h-4 text-blue-500" />
-                <span className="font-semibold">142</span>
+                <span className="font-semibold">{data?.length}</span>
                 <span>문제 해결</span>
-              </div>
-              <div className="flex items-center gap-1 text-gray-600 dark:text-gray-300">
-                <FaStar className="w-4 h-4 text-yellow-500" />
-                <span className="font-semibold">1,250</span>
-                <span>포인트</span>
-              </div>
-              <div className="flex items-center gap-1 text-gray-600 dark:text-gray-300">
-                <FaCalendarAlt className="w-4 h-4 text-green-500" />
-                <span className="font-semibold">28</span>
-                <span>일 활동</span>
               </div>
             </div>
 
@@ -91,7 +83,7 @@ export default function UserDashboard() {
           </div>
 
           {/* 액션 버튼들 */}
-          <div className="flex flex-col gap-3 mt-8">
+          <div className="flex flex-col gap-3 mt-6">
             <button className="group relative px-6 py-3 bg-gradient-to-r from-purple-500 to-indigo-500 text-white rounded-xl font-semibold text-sm shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 overflow-hidden">
               <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
               <div className="relative flex items-center gap-2">
