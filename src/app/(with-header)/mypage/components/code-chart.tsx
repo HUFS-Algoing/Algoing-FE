@@ -1,6 +1,6 @@
 "use client";
 
-import { BarChart3 } from "lucide-react";
+import { BarChart3, Code } from "lucide-react";
 import {
   LineChart,
   Line,
@@ -40,10 +40,19 @@ export default function CodeAnalysisChart({
               코드 품질 분석 추이
             </h2>
           </div>
-          <p className="text-sm text-slate-500 mt-1">데이터가 없습니다</p>
         </div>
-        <div className="p-4 h-[300px] flex items-center justify-center text-slate-400">
-          아직 분석된 코드가 없습니다
+        <div className="flex flex-col items-center justify-center py-12 text-center mt-4 ">
+          <div className="p-4 bg-gray-100 dark:bg-gray-700 rounded-full mb-4">
+            <Code className="h-8 w-8 text-gray-400" />
+          </div>
+          <>
+            <h3 className="text-base font-semibold text-gray-700 dark:text-gray-300 mb-2">
+              아직 분석된 추이가 없어요
+            </h3>
+            <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
+              문제를 풀어보시면 분석 추이를 확인할 수 있어요!
+            </p>
+          </>
         </div>
       </div>
     );
@@ -191,7 +200,6 @@ export default function CodeAnalysisChart({
           </div>
         </div>
 
-        {/* 품질 경고 메시지 */}
         {duplicateStats.average > 60 && (
           <p className="text-sm text-red-500 text-center mt-2">
             ⚠️ 중복도가 높습니다. 코드 리팩토링을 고려해보세요.

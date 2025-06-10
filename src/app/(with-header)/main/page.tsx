@@ -44,7 +44,7 @@ export default function UserDashboard() {
 
   useEffect(() => {
     if (myInfo) {
-      console.log(" /myinfo 응", myInfo);
+      console.log(" /myinfo ", myInfo);
       setUser(myInfo);
     }
   }, [myInfo, setUser]);
@@ -166,7 +166,7 @@ export default function UserDashboard() {
         </>
       ) : (
         <div className="text-sm text-center pt-8 text-gray-400 dark:text-gray-600">
-          최근 리뷰가 없습니다.
+          사용자 정보가 없습니다.
         </div>
       )}
     </div>

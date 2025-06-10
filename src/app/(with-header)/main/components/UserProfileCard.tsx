@@ -8,6 +8,7 @@ import { getTierName } from "@/app/_util/get-tier-name";
 import { getTierColor } from "@/app/_util/get-tier-color";
 import { Sparkle } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useContributions } from "@/app/hook/user/use-contributions";
 
 export default function UserProfileCard({ user }: { user: any }) {
   const tierName = getTierName(user.tier);
@@ -16,7 +17,7 @@ export default function UserProfileCard({ user }: { user: any }) {
   const handleClick = () => {
     router.push("/mypage");
   };
-
+  const { totalSolved } = useContributions(user.userId);
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -51,7 +52,7 @@ export default function UserProfileCard({ user }: { user: any }) {
           <div className="flex flex-wrap justify-center md:justify-start gap-4 text-sm text-gray-600 dark:text-gray-300 mt-2">
             <div className="flex items-center gap-2">
               <FaCode className="text-blue-500" />
-              <span className="font-semibold">{26} 문제 해결</span>
+              <span className="font-semibold">총 {totalSolved} 문제 해결</span>
             </div>
 
             <div className="text-xs text-gray-400">

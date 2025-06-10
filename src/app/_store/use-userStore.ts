@@ -3,6 +3,7 @@ import { MyInfoResponse } from "@/app/_api/user/getMyInfo";
 
 type UserState = MyInfoResponse & {
   setUser: (user: MyInfoResponse) => void;
+  clearUser: () => void;
 };
 
 export const useUserStore = create<UserState>((set) => ({
@@ -20,4 +21,20 @@ export const useUserStore = create<UserState>((set) => ({
   createdAt: "",
   username: "",
   setUser: (user) => set({ ...user }),
+  clearUser: () =>
+    set({
+      userId: 0,
+      email: "",
+      name: "",
+      role: "",
+      handle: "",
+      bojId: "",
+      bio: "",
+      picture: "",
+      tier: 0,
+      solvedCount: 0,
+      userPoint: 0,
+      createdAt: "",
+      username: "",
+    }),
 }));

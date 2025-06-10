@@ -3,10 +3,9 @@
 import { useState } from "react";
 import { ChevronLeft, ChevronRight, CalendarCheck } from "lucide-react";
 import { cn } from "@/app/_lib/utils";
-import { useZandi } from "@/app/hook/use-zandi";
 import { formatDate } from "@/app/_util/date";
 import { getGitHubColorClass } from "@/app/_util/color-class";
-import calculateMaxStreak from "@/app/_util/calculate-max-streak";
+import { useContributions } from "@/app/hook/user/use-contributions";
 
 export default function ContributionCalendar({
   userId,
@@ -24,7 +23,8 @@ export default function ContributionCalendar({
     count: number;
   } | null>(null);
 
-  const { data: contributions = [], isLoading } = useZandi(userId);
+  const { contributions, isLoading, activeDays, maxStreak } =
+    useContributions(userId);
 
   const daysOfWeek = ["일", "월", "화", "수", "목", "금", "토"];
   const firstDay = new Date(currentYear, currentMonth - 1, 1).getDay();
@@ -53,10 +53,6 @@ export default function ContributionCalendar({
   for (let i = 0; i < 6; i++) {
     weeks.push(calendarDays.slice(i * 7, (i + 1) * 7));
   }
-
-  const totalSolved = contributions.reduce((sum, c) => sum + c.count, 0);
-  const activeDays = contributions.filter((c) => c.count > 0).length;
-  const maxStreak = calculateMaxStreak(contributions);
 
   const handlePrevMonth = () => {
     if (currentMonth === 1) {
@@ -96,13 +92,13 @@ export default function ContributionCalendar({
         </button>
       </div>
 
-      <div className="flex justify-between text-xs text-gray-600 mb-4">
+      <div className="flex justify-end text-xs text-gray-600 mb-4">
         <div className="flex items-center gap-1">
           <CalendarCheck className="w-4 h-4" />
-          <span>총 {totalSolved}문제 </span>
-        </div>
-        <div>
-          활동일수 {activeDays}일 · 최대 연속 {maxStreak}일
+          <span>
+            {" "}
+            활동일수 {activeDays}일 · 최대 연속 {maxStreak}일{" "}
+          </span>
         </div>
       </div>
 

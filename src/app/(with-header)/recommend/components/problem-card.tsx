@@ -3,6 +3,7 @@
 import { Badge } from "@/app/_components/Badge";
 import { getTierColor } from "@/app/_util/get-tier-color";
 import { getTierName } from "@/app/_util/get-tier-name";
+import { ArrowRight, CheckCircle } from "lucide-react";
 
 interface ProblemCardProps {
   id: number;
@@ -14,6 +15,7 @@ interface ProblemCardProps {
 }
 
 const ProblemCard = ({
+  id,
   title,
   level,
   tags,
@@ -23,48 +25,53 @@ const ProblemCard = ({
   return (
     <div
       onClick={onClick}
-      className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-all duration-200 hover:-translate-y-1"
+      className="group bg-white/80 backdrop-blur-sm border border-gray-200/50  rounded-xl p-5  transition-all duration-300 cursor-pointer relative overflow-hidden"
     >
-      <div className="flex justify-between items-start mb-2">
-        <h3 className="text-base font-bold text-gray-900 line-clamp-1">
-          {title}
-        </h3>
-        <div
-          className={`flex items-center justify-center w-15 h-8 rounded-md whitespace-nowrap`}
-        >
-          <span
-            className={`text-xs px-2 py-1 rounded-full font-semibold ${getTierColor(level)}`}
-          >
-            {getTierName(level)}
-          </span>
+      <div className="absolute inset-0 bg-gradient-to-br from-blue-50/50 to-purple-50/50 opacity-0 "></div>
+
+      <div className="relative">
+        <div className="flex justify-between items-start mb-3">
+          <div className="flex-1 pr-3">
+            <div className="flex items-center gap-2 mb-2">
+              <span className="text-xs font-medium text-gray-500 0">#{id}</span>
+              {isSolved && <CheckCircle className="h-4 w-4 text-green-500" />}
+            </div>
+            <h3 className="text-base font-bold text-gray-900  line-clamp-2 leading-tight  transition-colors">
+              {title}
+            </h3>
+          </div>
+          <div className="flex flex-col items-end gap-2">
+            <span
+              className={`text-xs px-3 py-1 rounded-full font-semibold ${getTierColor(level)}`}
+            >
+              {getTierName(level)}
+            </span>
+            <ArrowRight className="h-4 w-4 text-gray-400 " />
+          </div>
         </div>
+
+        {tags.length > 0 && (
+          <div className="flex flex-wrap gap-1.5 mb-4">
+            {tags.slice(0, 3).map((tag) => (
+              <Badge
+                key={tag}
+                variant="outline"
+                className="text-xs bg-gray-50 "
+              >
+                {tag}
+              </Badge>
+            ))}
+            {tags.length > 3 && (
+              <Badge
+                variant="outline"
+                className="text-xs bg-gray-100  text-gray-600 "
+              >
+                +{tags.length - 3}
+              </Badge>
+            )}
+          </div>
+        )}
       </div>
-      {tags.length > 0 && (
-        <div className="mt-2 flex flex-wrap gap-1">
-          {tags.slice(0, 5).map((tag) => (
-            <Badge key={tag} variant="outline">
-              {tag}
-            </Badge>
-          ))}
-        </div>
-      )}
-      {isSolved && (
-        <div className="mt-2 flex items-center text-green-600 text-xs">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-4 w-4 mr-1"
-            viewBox="0 0 20 20"
-            fill="currentColor"
-          >
-            <path
-              fillRule="evenodd"
-              d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-              clipRule="evenodd"
-            />
-          </svg>
-          해결됨
-        </div>
-      )}
     </div>
   );
 };

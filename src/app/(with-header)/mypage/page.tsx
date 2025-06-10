@@ -27,7 +27,7 @@ const ProblemTabs = dynamic(() => import("./components/problem-tabs"), {
 export default function MyPage() {
   const [activeTab, setActiveTab] = useState("submitted");
   const problemsSectionRef = useRef<HTMLDivElement>(null);
-  const userId = 3;
+  const userId = 22;
   const { data: snapshotresult } = useSnapshotHistory(userId);
 
   const { data: solvedProblems = [], isLoading: isSolvedLoading } =
@@ -69,7 +69,6 @@ export default function MyPage() {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-        {/* <MypageIntroSection /> */}
         <StatsCards
           solvedCount={solvedProblems.length}
           reviewedCount={reviewedProblems.length}

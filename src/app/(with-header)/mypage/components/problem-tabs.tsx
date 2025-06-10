@@ -45,6 +45,7 @@ export default function ProblemTabs({
   const closeModal = () => {
     setSelectedProblem(null);
     setCopied(false);
+    document.body.style.overflow = "";
   };
 
   return (
