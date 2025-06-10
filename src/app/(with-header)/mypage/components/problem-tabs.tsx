@@ -23,7 +23,7 @@ export default function ProblemTabs({
 }: ProblemTabsProps) {
   const [selectedProblem, setSelectedProblem] = useState<any | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [copied, setCopied] = useState(false);
+  const [, setCopied] = useState(false);
 
   const groupProblems = useMemo(
     () => groupProblemsById(solvedProblems),
@@ -94,14 +94,7 @@ export default function ProblemTabs({
       </div>
 
       {isModalOpen && selectedProblem && (
-        <ProblemModal
-          problem={selectedProblem}
-          copied={copied}
-          setCopied={setCopied}
-          setProblem={setSelectedProblem}
-          closeModal={closeModal}
-          onClose={closeModal}
-        />
+        <ProblemModal problem={selectedProblem} onClose={closeModal} />
       )}
     </>
   );
