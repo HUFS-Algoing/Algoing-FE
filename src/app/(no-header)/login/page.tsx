@@ -168,9 +168,9 @@ export default function LoginPage() {
             <div className="flex-1 max-w-lg order-1 lg:order-2 mb-8 lg:mb-0">
               <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-xl border border-white/20 transform transition-all duration-500 hover:scale-105">
                 <Image
-                  src="/img/section.png"
+                  src="/img/section1.png"
                   alt="문제 추천 시스템"
-                  width={500}
+                  width={800}
                   height={400}
                   className="w-full h-auto rounded-xl"
                 />
@@ -190,9 +190,9 @@ export default function LoginPage() {
             <div className="flex-1 max-w-lg mb-8 lg:mb-0">
               <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-xl border border-white/20 transform transition-all duration-500 hover:scale-105">
                 <Image
-                  src="/img/section.png"
+                  src="/img/section2.png"
                   alt="코드 실행 환경"
-                  width={500}
+                  width={700}
                   height={400}
                   className="w-full h-auto rounded-xl"
                 />
@@ -245,8 +245,8 @@ export default function LoginPage() {
                 <Image
                   src="/img/section4.png"
                   alt="코드 품질 분석 차트"
-                  width={500}
-                  height={400}
+                  width={900}
+                  height={600}
                   className="w-full h-auto rounded-xl"
                 />
               </div>
@@ -267,8 +267,8 @@ export default function LoginPage() {
                 <Image
                   src="/img/section5.png"
                   alt="학습 기록 관리"
-                  width={500}
-                  height={400}
+                  width={800}
+                  height={600}
                   className="w-full h-auto rounded-xl"
                 />
               </div>

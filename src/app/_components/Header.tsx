@@ -44,12 +44,10 @@ export default function Header() {
   const handleLogout = async () => {
     try {
       await logoutApi();
-      document.cookie =
-        "accessToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+      document.cookie = "accessToken=; Max-Age=0; Path=/; Domain=.al-going.com";
       clearUser();
       setIsProfileMenuOpen(false);
-
-      // router.push("/login");
+      window.location.href = "/login";
       console.error("로그아웃 성공");
     } catch (err) {
       console.error("로그아웃 실패:", err);
