@@ -28,7 +28,7 @@ export default function UserProfileCard({ user }: { user: any }) {
       <div className="relative flex flex-col md:flex-row items-center md:items-start gap-6">
         <div className="relative w-24 h-24">
           <Image
-            src={user.picture || "/default.png"}
+            src={user.picture || "/profile5.png"}
             alt="프로필"
             width={96}
             height={96}

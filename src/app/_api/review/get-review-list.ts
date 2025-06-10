@@ -8,6 +8,7 @@ export interface ReviewedProblem {
   createdAt: string;
   code: string;
   language: string;
+  level?: number;
 }
 
 export interface ReviewedResponse {

@@ -14,6 +14,8 @@ import { getLanguageForHighlighter } from "@/app/_util/get-language-highlight";
 
 import { Code, Bot, Calendar, Hash } from "lucide-react";
 import { getLanguageColor } from "@/app/_util/get-language-color";
+import { getTierColor } from "@/app/_util/get-tier-color";
+import { getTierName } from "@/app/_util/get-tier-name";
 
 interface CodeReviewModalProps {
   isOpen: boolean;
@@ -29,6 +31,7 @@ interface CodeReviewModalProps {
     title?: string;
     baekjoonTier?: string;
     algorithmType?: string;
+    level?: number;
   } | null;
 }
 
@@ -52,14 +55,15 @@ export function CodeReviewModal({
   return (
     <Modal isOpen={isOpen} onClose={onClose} className="max-w-6xl">
       <div className="flex flex-col h-full max-h-[90vh]">
-        {/* Header */}
         <div className="p-6 border-b border-gray-200">
           <div className="flex items-start justify-between mb-4">
             <div>
               <h2 className="text-2xl font-bold text-gray-900 mb-2 flex gap-2">
                 {review.title || `문제 #${review.problemNum}`}
-                {review.baekjoonTier && (
-                  <Badge variant="outline">{review.baekjoonTier}</Badge>
+                {typeof review.level === "number" && (
+                  <Badge className={getTierColor(review.level)}>
+                    {getTierName(review.level)}
+                  </Badge>
                 )}
               </h2>
               <div className="flex items-center gap-3 text-sm text-gray-600">

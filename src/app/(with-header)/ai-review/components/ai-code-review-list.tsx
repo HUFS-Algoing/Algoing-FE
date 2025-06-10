@@ -33,6 +33,8 @@ export default function AICodeReviewList() {
 
   const filterOptions = [
     { id: "all", label: "전체", icon: <Filter className="h-4 w-4" /> },
+    { id: "Bronze", label: "브론즈", icon: <Award className="h-4 w-4" /> },
+    { id: "Silver", label: "실버", icon: <Award className="h-4 w-4" /> },
     { id: "Gold", label: "골드 이상", icon: <Award className="h-4 w-4" /> },
   ];
 
@@ -53,7 +55,6 @@ export default function AICodeReviewList() {
   const mergedReviews = reviews.map((review, index) => {
     const problem = problemQueries[index]?.data;
     const levelNum = Number(problem?.level);
-
     return {
       ...review,
       title: problem?.title || "제목 불러오는 중...",
@@ -70,13 +71,15 @@ export default function AICodeReviewList() {
 
   const filteredReviews = mergedReviews.filter((review) => {
     if (selectedFilter === "all") return true;
-    if (selectedFilter === "Gold")
-      return (
-        review.baekjoonTier?.includes("Gold") ||
-        review.baekjoonTier?.includes("Platinum") ||
-        review.baekjoonTier?.includes("Diamond")
-      );
-
+    if (selectedFilter === "Gold") {
+      return review.level >= 11;
+    }
+    if (selectedFilter === "Bronze") {
+      return review.level >= 1 && review.level < 6;
+    }
+    if (selectedFilter === "Silver") {
+      return review.level >= 6 && review.level < 11;
+    }
     return true;
   });
 
@@ -95,16 +98,6 @@ export default function AICodeReviewList() {
     setIsModalOpen(false);
     setSelectedReview(null);
   };
-
-  // const getTierBadge = (tier: string, level?: number) => {
-  //   return (
-  //     <span
-  //       className={`px-2 py-1 rounded-md text-xs font-medium ${getTierColor(level ?? 0)}`}
-  //     >
-  //       {tier}
-  //     </span>
-  //   );
-  // };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -218,7 +211,7 @@ export default function AICodeReviewList() {
 
               <div className="divide-y divide-gray-100">
                 <AnimatePresence>
-                  {sortedReviews.map((review, index) => (
+                  {sortedReviews.map((review) => (
                     <motion.div
                       key={review.id}
                       initial={{ opacity: 0, y: 10 }}
@@ -246,10 +239,15 @@ export default function AICodeReviewList() {
 
                       <div className="col-span-2 text-center">
                         <span
-                          className={`text-xs px-2 py-1 rounded-full font-semibold ${getTierColor(problemQueries[index]?.data?.level ?? 0)}`}
+                          className={`text-xs px-2 py-1 rounded-full font-semibold ${getTierColor(review.level)}`}
                         >
-                          {getTierName(problemQueries[index]?.data?.level ?? 0)}
+                          {review.baekjoonTier}
                         </span>
+                        {/* <span
+                          className={`text-xs px-2 py-1 rounded-full font-semibold ${getTierColor(review.level)}`}
+                        >
+                          {getTierName(review.level)}
+                        </span> */}
                       </div>
 
                       <div className="col-span-2 text-center">
@@ -307,11 +305,9 @@ export default function AICodeReviewList() {
 
                         <div className="col-span-2 text-center">
                           <span
-                            className={`text-xs px-2 py-1 rounded-full font-semibold ${getTierColor(problemQueries[index]?.data?.level ?? 0)}`}
+                            className={`text-xs px-2 py-1 rounded-full font-semibold ${getTierColor(review.level)}`}
                           >
-                            {getTierName(
-                              problemQueries[index]?.data?.level ?? 0
-                            )}
+                            {review.baekjoonTier}
                           </span>
                         </div>
 

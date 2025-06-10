@@ -22,7 +22,8 @@ export default function UserDashboard() {
     email: "ahr020532@gmail.com",
     handle: null,
     name: "google_103635454461245049460",
-    picture: "https://…",
+    picture:
+      "https://lh3.googleusercontent.com/a/ACg8ocK95eW6x4k42UvXsjHaSdg1WaU9wVAadFfURIs9m-zA-2fiXg=s96-c",
     role: "USER",
     solvedCount: 0,
     tier: 10,
