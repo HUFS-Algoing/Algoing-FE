@@ -1,6 +1,5 @@
 "use client";
 
-import { getLanguageColor } from "@/app/_util/get-language-color";
 import { getTierColor } from "@/app/_util/get-tier-color";
 import { getTierName } from "@/app/_util/get-tier-name";
 import React from "react";
@@ -33,11 +32,7 @@ export default function SubmittedProblemTab({
             </span>
           </div>
           <div className="flex items-center justify-between text-xs">
-            <span
-              className={`px-2 py-1 rounded-md font-medium ${getLanguageColor(
-                problem.language
-              )}`}
-            >
+            <span className={`px-2 py-1 rounded-md font-medium text-gray-600`}>
               {problem.language}
             </span>
             <div className="flex items-center gap-1">
