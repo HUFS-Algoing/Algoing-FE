@@ -86,7 +86,7 @@ export default function RecommendedProblems() {
             </span>
             <span className="inline-flex items-center border border-gray-200 px-2 py-1 rounded-full text-xs font-medium bg-gray-50 text-gray-600">
               <Tag className="h-3 w-3 mr-1" />
-              {problem.tagNames}
+              {problem.tagNames.split(",").slice(0, 2).join(", ")}
             </span>
           </div>
           <p className="text-sm font-semibold mt-1 truncate">

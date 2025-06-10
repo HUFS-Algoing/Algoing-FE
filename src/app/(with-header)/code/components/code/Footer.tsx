@@ -41,7 +41,6 @@ export default function Footer({
 
   return (
     <footer className="w-full fixed bottom-0 left-0 border-t bg-white py-2 px-8 flex items-center justify-between z-10">
-      {/* 왼쪽: 힌트 보기 버튼 */}
       <div className="relative">
         <button
           onClick={handleHintClick}
@@ -87,19 +86,6 @@ export default function Footer({
         </AnimatePresence>
       </div>
 
-      {/* 가운데: 이전 / 다음 */}
-      <div className="absolute left-1/2 transform -translate-x-1/2 flex items-center gap-4">
-        <button className="flex items-center gap-1 text-gray-700">
-          <span>←</span>
-          <span>이전</span>
-        </button>
-        <button className="flex items-center gap-1 text-gray-700">
-          <span>다음</span>
-          <span>→</span>
-        </button>
-      </div>
-
-      {/* 오른쪽: 실행 / 제출 */}
       <div className="flex items-center gap-3">
         <button
           onClick={onExecuteOnly}

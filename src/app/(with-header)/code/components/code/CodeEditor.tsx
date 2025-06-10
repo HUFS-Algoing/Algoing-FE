@@ -15,7 +15,7 @@ export default function ResizableCodeEditor({
   language,
 }: CodeEditorProps) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [editorHeight, setEditorHeight] = useState(500); // 👉 더 긴 기본값
+  const [editorHeight, setEditorHeight] = useState(500);
   const [isResizing, setIsResizing] = useState(false);
   const [activeTab, setActiveTab] = useState<"output">("output");
 
@@ -71,17 +71,10 @@ export default function ResizableCodeEditor({
         >
           실행 결과
         </button>
-        {/* 다른 탭도 추가 가능 */}
       </div>
 
-      {/* 탭 콘텐츠 */}
       <div className="h-60 p-4 text-sm text-gray-800 overflow-y-auto whitespace-pre-wrap bg-white">
-        {activeTab === "output" && (
-          <>
-            {/* 결과 바인딩 영역 */}
-            결과 출력 영역입니다.
-          </>
-        )}
+        {activeTab === "output" && <>결과 출력 영역입니다.</>}
       </div>
     </div>
   );

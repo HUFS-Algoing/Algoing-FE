@@ -92,7 +92,7 @@ export default function ContributionCalendar({
         </button>
       </div>
 
-      <div className="flex justify-end text-xs text-gray-600 mb-4">
+      <div className="flex justify-end text-xs text-gray-600 mb-4 mt-8">
         <div className="flex items-center gap-1">
           <CalendarCheck className="w-4 h-4" />
           <span>
