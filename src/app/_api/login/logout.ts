@@ -2,7 +2,7 @@ import axiosInstance from "../instance";
 
 export const logoutApi = async (): Promise<void> => {
   const response = await axiosInstance.post<void>(
-    "/auth/logout",
+    "/logout",
     {},
     { validateStatus: () => true }
   );
