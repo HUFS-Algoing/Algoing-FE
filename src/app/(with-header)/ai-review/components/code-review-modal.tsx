@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { Modal } from "@/app/(with-header)/ai-review/components/modal";
 import { Badge } from "@/app/_components/Badge";
 import {
@@ -12,26 +13,33 @@ import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 import { getLanguageForHighlighter } from "@/app/_util/get-language-highlight";
 
-import { Code, Bot, Calendar, Hash } from "lucide-react";
+import { Code, Bot, Calendar, Hash, Copy, Check } from "lucide-react";
 import { getLanguageColor } from "@/app/_util/get-language-color";
 import { getTierColor } from "@/app/_util/get-tier-color";
 import { getTierName } from "@/app/_util/get-tier-name";
+
+interface Submission {
+  id: number;
+  userId: number;
+  problemNum: number;
+  summary: string;
+  createdAt: string;
+  code: string;
+  language: string;
+}
 
 interface CodeReviewModalProps {
   isOpen: boolean;
   onClose: () => void;
   review: {
     id: number;
-    userId: number;
     problemNum: number;
-    summary: string;
-    createdAt: string;
-    code: string;
-    language: string;
     title?: string;
     baekjoonTier?: string;
     algorithmType?: string;
     level?: number;
+    submissionCount: number;
+    submissions: Submission[];
   } | null;
 }
 
@@ -40,7 +48,12 @@ export function CodeReviewModal({
   onClose,
   review,
 }: CodeReviewModalProps) {
+  const [currentSubmissionIndex, setCurrentSubmissionIndex] = useState(0);
+  const [copied, setCopied] = useState(false);
+
   if (!review) return null;
+
+  const currentSubmission = review.submissions[currentSubmissionIndex];
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleString("ko-KR", {
@@ -50,6 +63,16 @@ export function CodeReviewModal({
       hour: "2-digit",
       minute: "2-digit",
     });
+  };
+
+  const copyToClipboard = async (text: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error("복사 실패:", err);
+    }
   };
 
   return (
@@ -69,21 +92,50 @@ export function CodeReviewModal({
               <div className="flex items-center gap-3 text-sm text-gray-600">
                 <div className="flex items-center gap-1">
                   <Calendar className="h-4 w-4" />
-                  <span>{formatDate(review.createdAt)}</span>
+                  <span>{formatDate(currentSubmission.createdAt)}</span>
                 </div>
                 <div className="flex items-center gap-1">
                   <Hash className="h-4 w-4" />
                   <span>문제 {review.problemNum}</span>
                 </div>
+                <div className="flex items-center gap-1">
+                  <span className="text-gray-500">
+                    총 {review.submissionCount}회 제출
+                  </span>
+                </div>
               </div>
             </div>
             <div className="flex items-center gap-2 mr-2">
-              <Badge className={getLanguageColor(review.language)}>
+              <Badge className={getLanguageColor(currentSubmission.language)}>
                 <Code className="h-3 w-3 mr-1" />
-                {review.language.toUpperCase()}
+                {currentSubmission.language.toUpperCase()}
               </Badge>
             </div>
           </div>
+
+          {/* 제출 내역 탭 */}
+          {review.submissions.length > 1 && (
+            <div className="flex items-center justify-between mb-4">
+              <h4 className="text-md font-medium text-gray-700">제출 내역</h4>
+              <div className="flex gap-2">
+                {review.submissions.map((submission, idx) => (
+                  <button
+                    key={submission.id}
+                    onClick={() => setCurrentSubmissionIndex(idx)}
+                    className={`w-8 h-8 rounded-full flex items-center justify-center text-sm transition-colors ${
+                      currentSubmissionIndex === idx
+                        ? "bg-indigo-600 text-white"
+                        : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                    }`}
+                    aria-label={`${idx + 1}번째 제출 보기`}
+                    aria-pressed={currentSubmissionIndex === idx}
+                  >
+                    {idx + 1}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Content */}
@@ -93,16 +145,36 @@ export function CodeReviewModal({
             <div className="space-y-4">
               <Card>
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Code className="h-5 w-5" />
-                    제출한 코드
-                  </CardTitle>
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="flex items-center gap-2">
+                      <Code className="h-5 w-5" />
+                      제출한 코드
+                      {review.submissions.length > 1 && (
+                        <span className="text-sm font-normal text-gray-600">
+                          ({currentSubmissionIndex + 1}번째 제출)
+                        </span>
+                      )}
+                    </CardTitle>
+                    <button
+                      className="flex items-center gap-1 px-3 py-1 text-xs font-medium rounded-md bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors"
+                      onClick={() =>
+                        copyToClipboard(currentSubmission.code || "")
+                      }
+                    >
+                      {copied ? (
+                        <Check className="w-3 h-3" />
+                      ) : (
+                        <Copy className="w-3 h-3" />
+                      )}
+                      {copied ? "복사됨" : "복사"}
+                    </button>
+                  </div>
                 </CardHeader>
                 <CardContent>
                   <div className="bg-slate-900 rounded-lg overflow-hidden">
                     <SyntaxHighlighter
                       language={getLanguageForHighlighter(
-                        review.language || "text"
+                        currentSubmission.language || "text"
                       )}
                       style={oneDark}
                       customStyle={{
@@ -123,7 +195,7 @@ export function CodeReviewModal({
                       wrapLines={true}
                       wrapLongLines={true}
                     >
-                      {review.code || ""}
+                      {currentSubmission.code || ""}
                     </SyntaxHighlighter>
                   </div>
                 </CardContent>
@@ -137,6 +209,11 @@ export function CodeReviewModal({
                   <CardTitle className="flex items-center gap-2">
                     <Bot className="h-5 w-5 text-blue-600" />
                     AI 코드 리뷰
+                    {review.submissions.length > 1 && (
+                      <span className="text-sm font-normal text-gray-600">
+                        ({currentSubmissionIndex + 1}번째 제출)
+                      </span>
+                    )}
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
@@ -146,7 +223,7 @@ export function CodeReviewModal({
                       전체 평가
                     </h4>
                     <p className="text-sm text-blue-800 leading-relaxed">
-                      {review.summary}
+                      {currentSubmission.summary}
                     </p>
                   </div>
                 </CardContent>
