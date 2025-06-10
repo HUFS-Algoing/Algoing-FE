@@ -22,11 +22,37 @@ import { CodeReviewModal } from "@/app/(with-header)/ai-review/components/code-r
 import { getTierColor } from "@/app/_util/get-tier-color";
 import { getTierName } from "@/app/_util/get-tier-name";
 
+interface GroupedReview {
+  id: number;
+  problemNum: number;
+  title: string;
+  isHighlighted: boolean;
+  problemNumber: number;
+  baekjoonTier: string;
+  level: number;
+  algorithmType: string;
+  tags: string[];
+  date: string;
+  status: string;
+  submissionCount: number;
+  submissions: Array<{
+    id: number;
+    userId: number;
+    problemNum: number;
+    summary: string;
+    createdAt: string;
+    code: string;
+    language: string;
+  }>;
+}
+
 export default function AICodeReviewList() {
   const [selectedFilter, setSelectedFilter] = useState<string>("all");
   const [currentPage, setCurrentPage] = useState(1);
   const [viewMode, setViewMode] = useState<"list" | "grid">("list");
-  const [selectedReview, setSelectedReview] = useState<any>(null);
+  const [selectedReview, setSelectedReview] = useState<GroupedReview | null>(
+    null
+  );
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const { data } = useReviewedProblems(3);
@@ -52,24 +78,48 @@ export default function AICodeReviewList() {
     })),
   });
 
-  const mergedReviews = reviews.map((review, index) => {
+  // 같은 문제 번호로 그룹화
+  const groupedReviews = reviews.reduce((acc, review, index) => {
     const problem = problemQueries[index]?.data;
     const levelNum = Number(problem?.level);
-    return {
-      ...review,
-      title: problem?.title || "제목 불러오는 중...",
-      isHighlighted: false,
-      problemNumber: problem?.problemId,
-      baekjoonTier: getTierName(levelNum), // 문자열 변환
-      level: levelNum,
-      algorithmType: problem?.tagNames?.split(",")[0] || "알 수 없음",
-      tags: problem?.tagNames?.split(",") || [],
-      date: new Date(review.createdAt).toLocaleDateString(),
-      status: "completed",
-    };
-  });
 
-  const filteredReviews = mergedReviews.filter((review) => {
+    const existingGroup = acc.find(
+      (group) => group.problemNum === review.problemNum
+    );
+
+    if (existingGroup) {
+      // 기존 그룹에 제출 내역 추가
+      existingGroup.submissions.push(review);
+      existingGroup.submissionCount += 1;
+      // 가장 최근 제출일로 업데이트
+      const newDate = new Date(review.createdAt);
+      const currentDate = new Date(existingGroup.date);
+      if (newDate > currentDate) {
+        existingGroup.date = newDate.toLocaleDateString();
+      }
+    } else {
+      // 새로운 그룹 생성
+      acc.push({
+        id: review.id,
+        problemNum: review.problemNum,
+        title: problem?.title || "제목 불러오는 중...",
+        isHighlighted: false,
+        problemNumber: problem?.problemId,
+        baekjoonTier: getTierName(levelNum),
+        level: levelNum,
+        algorithmType: problem?.tagNames?.split(",")[0] || "알 수 없음",
+        tags: problem?.tagNames?.split(",") || [],
+        date: new Date(review.createdAt).toLocaleDateString(),
+        status: "completed",
+        submissionCount: 1,
+        submissions: [review],
+      });
+    }
+
+    return acc;
+  }, [] as GroupedReview[]);
+
+  const filteredReviews = groupedReviews.filter((review) => {
     if (selectedFilter === "all") return true;
     if (selectedFilter === "Gold") {
       return review.level >= 11;
@@ -89,7 +139,7 @@ export default function AICodeReviewList() {
 
   const totalPages = Math.ceil(sortedReviews.length / 10);
 
-  const handleReviewClick = (review: any) => {
+  const handleReviewClick = (review: GroupedReview) => {
     setSelectedReview(review);
     setIsModalOpen(true);
   };
@@ -203,17 +253,18 @@ export default function AICodeReviewList() {
               className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden mb-6"
             >
               <div className="grid grid-cols-12 gap-4 px-6 py-3 bg-gradient-to-r from-indigo-50 to-purple-50 border-b border-gray-200 text-sm font-medium text-gray-600">
-                <div className="col-span-6">제목</div>
+                <div className="col-span-5">제목</div>
                 <div className="col-span-1 text-center">문제 번호</div>
                 <div className="col-span-2 text-center">백준 티어</div>
                 <div className="col-span-2 text-center">알고리즘 유형</div>
+                <div className="col-span-2 text-center">제출 횟수</div>
               </div>
 
               <div className="divide-y divide-gray-100">
                 <AnimatePresence>
                   {sortedReviews.map((review) => (
                     <motion.div
-                      key={review.id}
+                      key={review.problemNum}
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -10 }}
@@ -223,7 +274,7 @@ export default function AICodeReviewList() {
                       } hover:bg-gray-50 transition-colors duration-150`}
                       onClick={() => handleReviewClick(review)}
                     >
-                      <div className="col-span-6">
+                      <div className="col-span-5">
                         <div className="flex items-center flex-wrap gap-1.5">
                           <span className="text-gray-900 hover:text-indigo-600 font-medium line-clamp-1 ml-1">
                             {review.title}
@@ -243,17 +294,24 @@ export default function AICodeReviewList() {
                         >
                           {review.baekjoonTier}
                         </span>
-                        {/* <span
-                          className={`text-xs px-2 py-1 rounded-full font-semibold ${getTierColor(review.level)}`}
-                        >
-                          {getTierName(review.level)}
-                        </span> */}
                       </div>
 
                       <div className="col-span-2 text-center">
                         <span className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-gray-50 text-gray-700">
                           <Tag className="h-3 w-3 mr-1" />
                           {review.algorithmType}
+                        </span>
+                      </div>
+
+                      <div className="col-span-2 text-center">
+                        <span
+                          className={`inline-flex items-center px-2 py-1 rounded-md text-xs font-medium ${
+                            review.submissionCount > 1
+                              ? "bg-orange-50 text-orange-500"
+                              : "bg-blue-50 text-blue-500"
+                          }`}
+                        >
+                          {review.submissionCount}회
                         </span>
                       </div>
                     </motion.div>
@@ -273,7 +331,7 @@ export default function AICodeReviewList() {
               <AnimatePresence>
                 {sortedReviews.map((review, index) => (
                   <motion.div
-                    key={review.id}
+                    key={review.problemNum}
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -20 }}
@@ -303,13 +361,11 @@ export default function AICodeReviewList() {
                           {review.problemNumber}
                         </span>
 
-                        <div className="col-span-2 text-center">
-                          <span
-                            className={`text-xs px-2 py-1 rounded-full font-semibold ${getTierColor(review.level)}`}
-                          >
-                            {review.baekjoonTier}
-                          </span>
-                        </div>
+                        <span
+                          className={`text-xs px-2 py-1 rounded-full font-semibold ${getTierColor(review.level)}`}
+                        >
+                          {review.baekjoonTier}
+                        </span>
 
                         <span className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-gray-50 text-gray-700">
                           <Tag className="h-3 w-3 mr-1" />
@@ -323,6 +379,15 @@ export default function AICodeReviewList() {
                             {review.date}
                           </span>
                         </div>
+                        <span
+                          className={`inline-flex items-center px-2 py-1 rounded-md text-xs font-medium ${
+                            review.submissionCount > 1
+                              ? "bg-orange-100 text-orange-700"
+                              : "bg-blue-100 text-blue-700"
+                          }`}
+                        >
+                          {review.submissionCount}회 제출
+                        </span>
                       </div>
                     </div>
                   </motion.div>
