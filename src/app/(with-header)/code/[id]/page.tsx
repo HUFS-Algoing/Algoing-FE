@@ -9,6 +9,7 @@ import { useProblemSubmit } from "@/app/hook/problem/use-problem-submit";
 import { useParams } from "next/navigation";
 import { RotateCcw } from "lucide-react";
 import toast from "react-hot-toast";
+import { useUserStore } from "@/app/_store/use-userStore";
 
 interface ExecutionResult {
   message: string;
@@ -31,8 +32,8 @@ export default function Code() {
   const [executionResult, setExecutionResult] =
     useState<ExecutionResult | null>(null);
   const [isExecuting, setIsExecuting] = useState(false);
+  const { userId } = useUserStore();
 
-  const userId = 3; // 임시. /api/myinfo 결과로 대체 예정
   const { id } = useParams();
   const problemNum = Number(id);
 

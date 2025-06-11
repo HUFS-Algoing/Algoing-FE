@@ -12,7 +12,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import { useCodeReview } from "@/app/hook/review/use-review";
-// import { useUserStore } from "@/app/_store/use-userStore";
+import { useUserStore } from "@/app/_store/use-userStore";
 
 export interface CodeReviewProps {
   onClose: () => void;
@@ -28,10 +28,10 @@ export default function CodeReview({
   code,
 }: CodeReviewProps) {
   const { data, mutate, isPending } = useCodeReview();
-  // const { userId } = useUserStore();
+  const { userId } = useUserStore();
   const [displayedText, setDisplayedText] = useState("");
   const [isTyping, setIsTyping] = useState(false);
-  const userId = 3;
+
   useEffect(() => {
     mutate({ problemNum, language, code, userId });
   }, [mutate, problemNum, language, code, userId]);
@@ -189,7 +189,7 @@ export default function CodeReview({
                 </h3>
               </div>
               <p className="text-sm text-indigo-800 dark:text-indigo-200 leading-relaxed">
-                {displayedText.split(/\n\s*\n/)[0] ||
+                {displayedText.split(/\n\s*\n/)?.[0] ||
                   "코드 분석을 완료했습니다."}
                 {isTyping && <span className="animate-pulse">|</span>}
               </p>

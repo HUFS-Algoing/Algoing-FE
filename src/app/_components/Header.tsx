@@ -21,7 +21,7 @@ export default function Header() {
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
-  const { picture, username } = useUserStore();
+  const { picture, nickname } = useUserStore();
   const profileMenuRef = useRef<HTMLDivElement>(null);
   const clearUser = useUserStore((state) => state.clearUser);
 
@@ -199,7 +199,7 @@ export default function Header() {
                     />
                     <div>
                       <p className="text-sm font-semibold text-gray-900 ">
-                        {username || "사용자"}
+                        {nickname || "사용자"}
                       </p>
                     </div>
                   </div>

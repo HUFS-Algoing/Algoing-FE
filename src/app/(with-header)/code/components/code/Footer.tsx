@@ -4,6 +4,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useParams } from "next/navigation";
 import { useHint } from "@/app/hook/problem/use-getHint";
+import { useUserStore } from "@/app/_store/use-userStore";
 
 interface FooterProps {
   onSubmitForReview: () => void;
@@ -22,7 +23,7 @@ export default function Footer({
 
   const params = useParams();
   const problemId = Number(params?.id);
-  const userId = 3;
+  const { userId } = useUserStore();
 
   const { refetch, isLoading } = useHint(problemId, hintOrder, userId);
 

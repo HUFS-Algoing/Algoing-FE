@@ -9,15 +9,20 @@ import { getTierColor } from "@/app/_util/get-tier-color";
 import { Sparkle } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useContributions } from "@/app/hook/user/use-contributions";
+import { useUserStore } from "@/app/_store/use-userStore";
 
 export default function UserProfileCard({ user }: { user: any }) {
+  const { userId } = useUserStore();
   const tierName = getTierName(user.tier);
   const tierColor = getTierColor(user.tier);
   const router = useRouter();
+
   const handleClick = () => {
     router.push("/mypage");
   };
-  const { totalSolved } = useContributions(user.userId);
+
+  const { totalSolved } = useContributions(userId);
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}

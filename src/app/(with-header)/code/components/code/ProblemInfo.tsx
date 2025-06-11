@@ -13,10 +13,12 @@ import { Clock, MemoryStick, Tag, Trophy, Star } from "lucide-react";
 import { Badge } from "@/app/_components/Badge";
 import { useToggleBookmark } from "@/app/hook/problem/use-bookmark";
 import { useState } from "react";
+import { useUserStore } from "@/app/_store/use-userStore";
 
 export default function ProblemInfo() {
   const params = useParams();
   const problemId = Number(params?.id);
+  const { userId } = useUserStore();
 
   const { data, isLoading, isError } = useProblemDetail(problemId);
 
@@ -26,7 +28,7 @@ export default function ProblemInfo() {
 
   const handleBookmarkToggle = () => {
     toggleBookmarkMutation.mutate(
-      { userId: 3, problemId },
+      { userId: userId, problemId },
       {
         onSuccess: (res) => {
           setIsBookmarked(res.result); // 서버에서 리턴된 등록 여부 기반으로 상태 반영

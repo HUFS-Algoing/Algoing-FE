@@ -12,10 +12,10 @@ import {
   Zap,
 } from "lucide-react";
 import { Suspense, lazy } from "react";
-import { mockMyInfo } from "@/app/_mock/myinfo";
+import { useUserStore } from "@/app/_store/use-userStore";
 
 export default function RecommendationContent() {
-  const userId = 3;
+  const { userId, nickname } = useUserStore();
   const { data: recommendationData, isLoading } = useAllRecommendations(
     userId ?? 0
   );
@@ -28,7 +28,7 @@ export default function RecommendationContent() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-800">
       <IntroSection
-        username={mockMyInfo.username}
+        username={nickname}
         level={1}
         profileImage=""
         streak={0}

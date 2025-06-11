@@ -19,7 +19,7 @@ export const useUserStore = create<UserState>((set) => ({
   solvedCount: 0,
   userPoint: 0,
   createdAt: "",
-  username: "",
+  nickname: "",
   setUser: (user) => set({ ...user }),
   clearUser: () =>
     set({
@@ -35,6 +35,6 @@ export const useUserStore = create<UserState>((set) => ({
       solvedCount: 0,
       userPoint: 0,
       createdAt: "",
-      username: "",
+      nickname: "",
     }),
 }));

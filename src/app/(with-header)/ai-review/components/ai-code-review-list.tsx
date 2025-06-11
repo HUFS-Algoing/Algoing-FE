@@ -21,6 +21,7 @@ import {
 import { CodeReviewModal } from "@/app/(with-header)/ai-review/components/code-review-modal";
 import { getTierColor } from "@/app/_util/get-tier-color";
 import { getTierName } from "@/app/_util/get-tier-name";
+import { useUserStore } from "@/app/_store/use-userStore";
 
 interface GroupedReview {
   id: number;
@@ -54,8 +55,8 @@ export default function AICodeReviewList() {
     null
   );
   const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const { data } = useReviewedProblems(3);
+  const { userId } = useUserStore();
+  const { data } = useReviewedProblems(userId);
 
   const filterOptions = [
     { id: "all", label: "전체", icon: <Filter className="h-4 w-4" /> },

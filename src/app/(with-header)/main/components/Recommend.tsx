@@ -1,5 +1,6 @@
 "use client";
 
+import { useUserStore } from "@/app/_store/use-userStore";
 import { getTierColor } from "@/app/_util/get-tier-color";
 import { getTierName } from "@/app/_util/get-tier-name";
 import { useAllRecommendations } from "@/app/hook/recommend/use-all-recommend";
@@ -9,7 +10,7 @@ import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
 export default function RecommendedProblems() {
-  const userId = 3;
+  const { userId } = useUserStore();
   const router = useRouter();
   const {
     data: recommendationData,

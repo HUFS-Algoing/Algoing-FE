@@ -11,36 +11,10 @@ import { useUserStore } from "@/app/_store/use-userStore";
 import { useLatestReviewedProblem } from "@/app/hook/problem/use-latest-reivewed-1";
 import UserProfileCard from "./components/UserProfileCard";
 
-const isLocalEnvironment = () => {
-  return (
-    typeof window !== "undefined" && window.location.hostname === "localhost"
-  );
-};
 export default function UserDashboard() {
-  const mockMyInfo = {
-    bio: "",
-    bojId: "an290an",
-    createdAt: "2025-06-02T07:56:17.346838",
-    email: "ahr020532@gmail.com",
-    handle: null,
-    name: "google_103635454461245049460",
-    picture:
-      "https://lh3.googleusercontent.com/a/ACg8ocK95eW6x4k42UvXsjHaSdg1WaU9wVAadFfURIs9m-zA-2fiXg=s96-c",
-    role: "USER",
-    solvedCount: 0,
-    tier: 10,
-    token: null,
-    userId: 3,
-    userPoint: 0,
-    username: "컴퓨터공학손호언",
-  };
-
-  const { data: apiMyInfo } = useMyInfo();
-  // const { userId } = useUserStore();
+  const { data: myInfo } = useMyInfo();
+  const { userId } = useUserStore();
   const setUser = useUserStore((state) => state.setUser);
-  // 로컬 환경에서는 목데이터 사용, 배포 환경에서는 API 데이터 사용
-  const myInfo = isLocalEnvironment() ? mockMyInfo : apiMyInfo;
-  // const { data } = useSolvedProblems(3);
 
   useEffect(() => {
     if (myInfo) {
@@ -49,7 +23,7 @@ export default function UserDashboard() {
     }
   }, [myInfo, setUser]);
 
-  const { data: latestReview } = useLatestReviewedProblem(3);
+  const { data: latestReview } = useLatestReviewedProblem(userId);
 
   return (
     <div className="max-w-6xl mx-auto px-6 py-6">
@@ -59,7 +33,7 @@ export default function UserDashboard() {
 
           <div className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-6">
             <div className="border dark:border-gray-700 rounded-xl p-4">
-              <ContributionCalendar userId={3} year={2025} month={6} />
+              <ContributionCalendar userId={userId} year={2025} month={6} />
             </div>
 
             <div className="flex flex-col gap-6">

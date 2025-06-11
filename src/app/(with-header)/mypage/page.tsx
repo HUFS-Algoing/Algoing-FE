@@ -9,6 +9,7 @@ import { PageLoading } from "@/app/_components/loading";
 import { useSnapshotHistory } from "@/app/hook/use-snapshot";
 import dynamic from "next/dynamic";
 import SkeletonTabs from "./components/skelaton-tab";
+import { useUserStore } from "@/app/_store/use-userStore";
 
 const CodeAnalysisChart = dynamic(() => import("./components/code-chart"), {
   ssr: false,
@@ -27,7 +28,7 @@ const ProblemTabs = dynamic(() => import("./components/problem-tabs"), {
 export default function MyPage() {
   const [activeTab, setActiveTab] = useState("submitted");
   const problemsSectionRef = useRef<HTMLDivElement>(null);
-  const userId = 3;
+  const { userId } = useUserStore();
   const { data: snapshotresult } = useSnapshotHistory(userId);
 
   const { data: solvedProblems = [], isLoading: isSolvedLoading } =
