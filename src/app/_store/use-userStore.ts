@@ -7,7 +7,7 @@ type UserState = MyInfoResponse & {
 };
 
 export const useUserStore = create<UserState>((set) => ({
-  userId: 0,
+  userId: null,
   email: "",
   name: "",
   role: "",
@@ -23,7 +23,7 @@ export const useUserStore = create<UserState>((set) => ({
   setUser: (user) => set({ ...user }),
   clearUser: () =>
     set({
-      userId: 0,
+      userId: null,
       email: "",
       name: "",
       role: "",
